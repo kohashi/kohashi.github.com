@@ -6,7 +6,8 @@
 		<link type="text/css" href="css/ui-darkness/jquery-ui-1.8.17.custom.css" rel="stylesheet" />	
 		<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
 		<script type="text/javascript" src="js/jquery-ui-1.8.17.custom.min.js"></script>
-		<script type="text/javascript" src="https://raw.github.com/kohashi/jQuery-Keyframes-animation/master/jquery.kfAnimation.0.1.js"></script>
+		<script type="text/javascript" src="jquery.kfAnimation.0.1.js"></script>
+		<!--<script type="text/javascript" src="https://raw.github.com/kohashi/jQuery-Keyframes-animation/master/jquery.kfAnimation.0.1.js"></script>-->
 		<script type="text/javascript">
 	$(function() {
 		var $tab_title_input = $( "#tab_title")
@@ -107,7 +108,11 @@
 			.button()
 			.click(function(){
 				var selectedId = $tabs.tabs('option', 'selected') +1;
-				eval($("#tabs-" + selectedId).find('textarea').val());
+				try {
+					eval($("#tabs-" + selectedId).find('textarea').val());
+				} catch(e) {
+					alert('It was a problem with your code!');
+				}
 			});
 		//save button
 		$('#save')
