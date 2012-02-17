@@ -6,8 +6,7 @@
 		<link type="text/css" href="css/ui-darkness/jquery-ui-1.8.17.custom.css" rel="stylesheet" />	
 		<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
 		<script type="text/javascript" src="js/jquery-ui-1.8.17.custom.min.js"></script>
-		<script type="text/javascript" src="jquery.kfAnimation.0.1.js"></script>
-		<!--<script type="text/javascript" src="https://raw.github.com/kohashi/jQuery-Keyframes-animation/master/jquery.kfAnimation.0.1.js"></script>-->
+		<script type="text/javascript" src="https://raw.github.com/kohashi/jQuery-Keyframes-animation/master/jquery.kfAnimation.0.1.js"></script>
 		<script type="text/javascript">
 	$(function() {
 		var $tab_title_input = $( "#tab_title")
@@ -103,6 +102,11 @@
 			.click(function() {
 				$dialog.dialog( "open" );
 			});
+		$( "#reset" )
+			.button()
+			.click(function() {
+				reset_box();
+			});
 		//execute button
 		$( "#execute")
 			.button()
@@ -127,6 +131,7 @@
 			.button()
 			.click(function(){
 				delete localStorage['savedata'];
+				location.href = location.href;
 			});		
 		//textarea configiration
 		$(document).on('keydown', 'textarea', function(e){
@@ -167,6 +172,8 @@
 		<style type="text/css">
 			/*demo page css*/
 			body{ font: 62.5% "Trebuchet MS", sans-serif; margin: 10px 10px;}
+			h1 {font-size: 3em;}
+			h1 sub{ font-size : 65%; color:gray;}
 			.demoHeaders { margin-top: 2em; }
 			#dialog_link {padding: .4em 1em .4em 20px;text-decoration: none;position: relative;}
 			#dialog_link span.ui-icon {margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
@@ -181,21 +188,20 @@
 	#tabs li .ui-icon-close { float: left; margin: 0.4em 0.2em 0 0; cursor: pointer; }	
 	#demo_envelope{position : relative; height : 480px; padding : 0px 10px;}
 	#tabs { margin-top: 1em; width: 320px; height : 470px; position : absolute; top : 20px; left : 0px; }
-	#demo_area { margin-top: 1em; width: 590px; height : 470px; position : absolute; top : 20px; left : 330px; } 
+	#demo_area { margin-top: 1em; width: 590px; height : 470px; position : absolute; top : 20px; left : 330px; overflow:hidden;} 
 	.code_area { width : 300px; height:405px; color : #006666; font-family : Monaco, 'Courier New' !important; font-size:12px !important; padding : 6px;}
 	#tabs .ui-tabs-panel  { padding : 3px 3px !important;}
 	#demo_stage { position : absolute; border : solid 1px gray; top : 20px; left : 60px; width : 320px; height : 418px; }
 	#demo_stage_size_disp { position : absolute; left : 430px; top : 80px; color : #eee; }
+	#infoArea { font-size: 1.3em; line-height: 1.1; margin: 1em 0; width: 650px; padding:0px 80px;}
 		</style>	
 	</head>
 	<body>
-	<h1>jQuery kfAnimation  ver.0.1</h1>
-	<p style="font-size: 1.3em; line-height: 1.1; margin: 1em 0; width: 80%; padding:0px 12px;">flashライクなタイムラインを使用したアニメーションが作れます。<br />
-	動作サンプルを見て、色々変更して試してください。 <br />
-	編集データはローカルストレージに保存できます。(SafariやChromeでは対応してます。してないのがあれば  <a href="https://twitter.com/#!/hako584">@hako584</a> まで) </p>
+	<h1>jQuery kfAnimation  <sub>ver.0.1</sub></h1>
+
 	
 		<!-- Tabs -->
-		<h2 class="demoHeaders">ライブコーディング</h2>
+		<h2 class="demoHeaders">Demo </h2>
 <div id="demo_envelope">
 	<div id="tab_dialog" title="Tab data">
 		<form>
@@ -205,56 +211,64 @@
 			</fieldset>
 		</form>
 	</div>
-
-	<button id="add_tab">タブを追加</button>
-	<button id="execute">再生する</button>
-	<button id="save" style="margin-left: 320px;">現在の状況を保存する</button>
-	<button id="clearData">初期化</button>
+	<span style="font-size: 1.3em;">Examples : </span>
+	<!--<button id="add_tab">タブを追加</button>-->
+	<button id="execute" style="margin-left: 120px;">Execute!</button>
+	<!--<button id="save" style="margin-left: 320px;">現在の状況を保存する</button>-->
+	<!--<button id="clearData">初期化</button>-->
+	<button id="reset">Reset</button>
 
 		<!-- tabs area -->
 		<div id="tabs">
 			<ul>
-				<li><a href="#tabs-1">1</a><span class="ui-icon ui-icon-close">Remove Tab</span></li>
-				<li><a href="#tabs-2">2</a><span class="ui-icon ui-icon-close">Remove Tab</span></li>
-				<li><a href="#tabs-3">3</a><span class="ui-icon ui-icon-close">Remove Tab</span></li>
-				<li><a href="#tabs-4">4</a><span class="ui-icon ui-icon-close">Remove Tab</span></li>
+				<li><a href="#tabs-1">1</a></li>
+				<li><a href="#tabs-2">2</a></li>
+				<li><a href="#tabs-3">3</a></li>
+				<li><a href="#tabs-4">4</a></li>
 			</ul>
 			<!-- sample start -->
 			<div id="tabs-1" ><textarea class="code_area">
 $('#box').keyframe({
   300: {
-    left: 200
+    left: '200px'
   },
   500: {
-    left: 150
+    left: '150px'
   },
   1000: {
-    left: 400
+    left: '400px'
   }
-}, 'easeInOutSine');
+}, 'easeOut');
 
-// easing value from jQuery.easing plugin
-			</textarea></div>
+// 1st argument : animation definication.
+// 2nd argument : (optional) easing. 
+// ease, ease-out, ease-in, ease-in-out,
+// linear, cubic-bezier(x1, y1, x2, y2)
+//   default : ease.
+//
+// (e.g. cubic-bezier(0.5, 0.2, 0.3, 1.0))
+
+</textarea></div>
 			<div id="tabs-2" ><textarea class="code_area">
 $('#box').keyframe({
   700: {
-    height: 300,
-    width: 300,
-    top: 20
+    height: '300px',
+    width: '300px',
+    top: '20px'
   },
   1400: {
-    width: 60,
-    height: 60,
-    left: 200,
+    width: '60px',
+    height: '60px',
+    left: '200px',
   },
   1100: {
-    top: 200
+    top: '200px'
   },
   1600: {
-    width:80,
-    height:80,
-    left:190,
-    top: 100
+    width:'80px',
+    height:'80px',
+    left:'190px',
+    top: '100px'
   }
 });
 </textarea></div>
@@ -262,30 +276,30 @@ $('#box').keyframe({
 $('#box').keyframe({
   start: {
     opacity: 0.8,
-    top: 100, left: 15,
-    width: 60, height:60,
+    top: '100px', left: '15px',
+    width: '60px', height:'60px',
   },
   100: {
-    left: 50,
+    left: '50px',
     opacity: 1
   },
   257: {
-    left: 200,
+    left: '200px',
     width: 200
   },
   560: {
-    top: 30,
-    height: 60
+    top: '30px',
+    height: '60px'
   },
   900: {
     opacity: 1,
-    height: 120,
-    top: 390,
+    height: '120px',
+    top: '390px',
     'line-height': '60px'
   },
   920: {
     opacity:0.6,
-    height: 30,
+    height: '30px',
     'line-height': '30px'
   }
 });
@@ -301,8 +315,8 @@ $('#box').keyframe({
   start: {
     opacity: 1,
     'background-color': p,
-    top: 170, left: 265,
-    width: 60, height:60
+    top: '170px', left: '265px',
+    width: '60px', height:'60px'
   },
   
   // Blink, blink, blink
@@ -317,16 +331,16 @@ $('#box').keyframe({
   // Explosion start point
   1950: {
     'background-color': p,
-    top: 170, left: 265,
-    width: 60, height:60,
+    top: '170px', left: '265px',
+    width: '60px', height:'60px',
     opacity: 1
   },
   
   // Explosion
   2200: {
     'background-color': r,
-    width:1800, height:600,
-    top: -88, left: -600,
+    width:'1800px', height:'600px',
+    top: '-88px', left: '-600px',
     opacity:0
   }
   
@@ -344,12 +358,29 @@ $('#box').keyframe({
 				</div>
 			</div>
 		</div>
+<!-- info -->
+		<div id="infoArea">
+			<hr style ="margin : 60px 0px;">
+			<h2 class="demoHeaders">Infomation. </h2>
 
-				
-		<hr style ="margin : 60px 0px;">
-		<h2 class="demoHeaders">ドキュメント</h2>
-
-
+			<h3>About&#8201;&mdash;</h3>
+			<p>With jquery-keyframeAnimation, you can write CSS3 keyframes animation easily. And to replace FLASH, those animation designation use millisecond.</p>
+			<p>jquery-keyframeAnimation is easy to designation, usefull for desingners. DOM-object is set to last keyframe animation position, not first position. (normally CSS3-keyframes-animation is set to first position! And sometimes it is confused desingners. ).</p>
+			<p>jquery-keyframeAnimation is Copyright <a href="https://twitter.com/#!/hako584">@hako584</a>. Under the MIT or GPL3 licenses.</p>
+			<hr />
+			
+			<h3>Todo&#8201;&mdash;</h3>
+			<ul>
+			  <li>Make multiple keyframe queue.</li>
+			  <li>Real Testing</li>
+			</ul>
+			<hr />
+			
+			<h3>Download&#8201;&mdash;</h3>
+			<p>jQuery.kfAnimation
+			  <a target="_blank" href="https://raw.github.com/kohashi/jQuery-Keyframes-animation/master/jquery.kfAnimation.0.1.js">v0.0.1</a>
+			</p>
+		</div>
 	</body>
 </html>
 
