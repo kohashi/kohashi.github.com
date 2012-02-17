@@ -241,7 +241,11 @@ $('#box').keyframe({
 }, 'easeOut');
 
 // 1st argument : animation definication.
-// 2nd argument : (optional) easing. 
+// 2nd argument : easing　(optional) 
+//   choices:　ease, ease-out, ease-in, ease-in-out,
+//     linear, cubic-bezier(x1, y1, x2, y2)
+//   default : ease
+//   (e.g. cubic-bezier(0.5, 0.2, 0.3, 1.0))
 // ease, ease-out, ease-in, ease-in-out,
 // linear, cubic-bezier(x1, y1, x2, y2)
 //   default : ease.
@@ -364,15 +368,17 @@ $('#box').keyframe({
 			<h2 class="demoHeaders">Infomation. </h2>
 
 			<h3>About&#8201;&mdash;</h3>
-			<p>With jquery-keyframeAnimation, you can write CSS3 keyframes animation easily. And to replace FLASH, those animation designation use millisecond.</p>
-			<p>jquery-keyframeAnimation is easy to designation, usefull for desingners. DOM-object is set to last keyframe animation position, not first position. (normally CSS3-keyframes-animation is set to first position! And sometimes it is confused desingners. ).</p>
+			<p> With jquery-keyframeAnimation, you can create CSS3 keyframe animations easily.</p>
+			<p> jquery-keyframeAnimation is meant to be easily used by designers and artists.</p>
+			<p> Just like in Flash, animations can be specified in milliseconds.</p>
+			<p> Furthermore, default CSS3 keyframe animations return to the original frame after the animation is completed, but in jquery-keyframeAnimation the DOM objects become fixed to the last frame. This is also similar to Flash.</p>
 			<p>jquery-keyframeAnimation is Copyright <a href="https://twitter.com/#!/hako584">@hako584</a>. Under the MIT or GPL3 licenses.</p>
 			<hr />
 			
-			<h3>Todo&#8201;&mdash;</h3>
+			<h3>Pending&#8201;&mdash;</h3>
 			<ul>
-			  <li>Make multiple keyframe queue.</li>
-			  <li>Real Testing</li>
+			  <li>Allow multiple animations to be processed simultaneously.</li>
+			  <li>Permit initialization of objects within the program.</li>
 			</ul>
 			<hr />
 			
