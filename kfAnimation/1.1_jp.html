@@ -10,7 +10,7 @@
 		<script type="text/javascript">
 	$(function() {
 		var $tab_title_input = $( "#tab_title")
-		var tab_counter = 4;
+		var tab_counter = 5;
 		var tab_content_wrapper = '';
 
 		// tabs init with a custom tab template and an "add" callback filling in the content
@@ -84,7 +84,7 @@
 					cursor: 'default',
 					opacity: 1
 				});
-				$('#box2').css('left', '460px');
+				$('#box2').css({'left': '460px', background:'#965849'});
 			}
 		reset_box();
 
@@ -231,16 +231,16 @@
 	<div id="dialog-message" title="All Data Clear">
 	<p>
 		<span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
-		Unsaved data will be clear. ok?
+		All data will be clear. ok?
 	</p>
 	</div>
 	
 	<span style="font-size: 1.3em;">Examples : </span>
 	<button id="add_tab">タブを追加</button>
 	<button id="execute" style="margin-left: 120px;">実行!</button>
-	<button id="save" style="margin-left: 320px;">現在の状況を保存する</button>
+	<button id="save" style="margin-left: 320px;">現在のデータを保存する</button>
 	<button id="reset">リセット</button>
-	<button id="clearData" style="margin-left: 20px;">初期化</button>
+	<button id="clearData" style="margin-left: 20px;">Clear Data</button>
 
 		<!-- tabs area -->
 		<div id="tabs">
@@ -249,6 +249,7 @@
 				<li><a href="#tabs-2">2</a></li>
 				<li><a href="#tabs-3">3</a></li>
 				<li><a href="#tabs-4">4</a></li>
+				<li><a href="#tabs-5">5</a></li>
 			</ul>
 			<!-- sample start -->
 			<div id="tabs-1" ><textarea class="code_area">
@@ -369,6 +370,35 @@ $('#box1').keyframe({
   }
   
 }, 'easeOutExpo');
+		</textarea></div>
+			<div id="tabs-5" ><textarea class="code_area">
+// 2つ同時に動かす
+$('#box1').keyframe({
+  start:{opacity: 1,
+  top: '100px',
+  width: '60px', height:'60px'},
+  300: {
+    left: '200px'
+  },
+  500: {
+    left: '150px'
+  },
+  1000: {
+    left: '460px'
+  }
+}, 'easeOut');
+
+$('#box2').keyframe({
+  300: {
+    left: '260px'
+  },
+  500: {
+    left: '310px'
+  },
+  1000: {
+    left: '15px'
+  }
+}, 'easeOut');
 		</textarea></div>
 
 			<!-- sample end -->

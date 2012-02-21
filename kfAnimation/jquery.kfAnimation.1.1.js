@@ -33,7 +33,6 @@
 
   // Extend jQuery function
   $.fn.keyframe = function(){
-	console.log(111)
     // exit if no options
     if (arguments.length == 0) return this;
     // Store reference to self
@@ -87,7 +86,7 @@
     animStyleNode.text(animStyleNode.text() + '@-' + VENDER_PREFIX + '-keyframes ' + keyframeAnimName + ' {'+
     cssKeyFrame +
     '}' + '\n');
-    _.css(VENDER_PREFIX + 'Animation-name' , '"' + keyframeAnimName + '"');
+    
     _.css(VENDER_PREFIX + 'Animation-duration' , duration/1000 + 's');
     _.css(VENDER_PREFIX + 'Animation-timing-function' , default_easing);
     _.css(VENDER_PREFIX + 'Animation-iteration-count' , ' 1');
@@ -96,6 +95,10 @@
     // If start animation is not defined, need to use default style on animation starting.
     if(anim[0])_.css(resultStyle);
     else setTimeout(function(){_.css(resultStyle);},10);
+	setTimeout(function(){
+	
+	_.css(VENDER_PREFIX + 'Animation-name' , '"' + keyframeAnimName + '"');
+	},10)
     
     
     
