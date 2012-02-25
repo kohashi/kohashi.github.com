@@ -8,6 +8,8 @@
 		<script type="text/javascript" src="js/jquery-ui-1.8.17.custom.min.js"></script>
 		<script type="text/javascript">
 			$(function(){
+				$('img').each(
+					function(){$(this).attr('src', 'hoge.png')})
 
 				// Accordion
 				$("#accordion").accordion({ header: "h3" });
@@ -132,7 +134,7 @@
 		<div id="dialog" title="Dialog Title">
 			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
 		</div>
-			
+		<img src="png.png" />
 				
 				
 		<h2 class="demoHeaders">Framework Icons (content color preview)</h2>
