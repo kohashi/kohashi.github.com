@@ -7,6 +7,8 @@
 		<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
 		<script type="text/javascript" src="js/jquery-ui-1.8.17.custom.min.js"></script>
 		<script type="text/javascript" src="jquery.kfAnimation.1.1.js"></script>
+		<script type="text/javascript" src="js/underscore.js"></script>
+		<script type="text/javascript" src="js/backbone.js"></script>
 		<script type="text/javascript">
 	$(function() {
 		var $tab_title_input = $( "#tab_title")
@@ -189,6 +191,60 @@
 
 	});
 		</script>
+		
+		<script type="text/javascript">
+		$(function(){
+			console.log('aaa')
+			var PropModel = Backbone.Model.extend({
+			    initialize: function () {
+			        this.set({
+			            domId: 'tweet_' + this.cid
+			        })
+			    },
+
+				defaults :{
+					alpha : 1,
+					display : true,
+					frame : 0
+				},
+				destroy : {
+					
+				},
+				validate: function(){
+					
+				}
+			});
+            var PropCollection = Backbone.Collection.extend({
+            	model : PropModel, //なくてもOKらしい
+            	initialize : function(){
+            		//this.bind("add", function(obj){}, this) //コレクション追加時のイベント
+            	}
+            });
+            var PropView = Backbone.View.extend({
+            	tagName : "div", //省略可能？ラップするタグ
+            	template : _.template($("#prop-template").html()),
+            	events: { //イベントハンドラのマッピングらしい
+            		//"click input" : "_onChange"
+            	},
+            	initialize : function(){
+            		this.model.bind("change", this.render, this);
+            	},
+            	add_me : function(){
+            		var name = "aaaa"//$("#hoge").val()
+            		var prop = new PropModel({alpha:0.3})
+            		this.model.add(prop);
+            	},
+            	render : function(){
+            		var data = this.model.toJSON();//モデル取得
+            		console.log(data)
+            		var html = this.template(data[0]);//テンプレート適用
+            		$(this.el).html(html); // 上書き
+            	},
+            	el : $('#target')
+            });
+            window.App = new PropView({ model: new PropCollection() });
+          });
+		</script>
 		<style type="text/css">
 			/*demo page css*/
 			body{ font: 62.5% "Trebuchet MS", sans-serif; margin: auto; width:980px;}
@@ -225,7 +281,15 @@
 	<body>
 	<div style="text-align:left;">
 	<h1>jQuery kfAnimation  <sub>ver.1.1</sub></h1>
-
+		<!-- view template -->
+        <script id="prop-template" type="text/html">
+              <input class="name-input" type="text" value="<%= alpha %>"/>
+                <!--   <input class="save-input" type="button" value="save"/>
+                <input class="cancel-input" type="button" value="cancel"/>
+                <input class="delete-input" type="button" value="delete"/> -->
+        </script>
+<script></script>aaa
+            <div id="target"></div>
 	
 		<!-- Tabs -->
 		<h2 class="demoHeaders">Demo </h2>
