@@ -4,8 +4,10 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>jQuery-keyframe Animation</title>
 		<link type="text/css" href="../css/ui-darkness/jquery-ui-1.8.17.custom.css" rel="stylesheet" />	
+		<link type="text/css" href="../css/colorpicker.css" rel="stylesheet" />	
 		<script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
 		<script type="text/javascript" src="../js/jquery-ui-1.8.17.custom.min.js"></script>
+		<script type="text/javascript" src="../js/colorpicker.js"></script>
 		<script type="text/javascript" src="./jquery.kfAnimation.1.1.js"></script>
 		<script type="text/javascript" src="../js/underscore.js"></script>
 		<script type="text/javascript" src="../js/backbone.js"></script>
@@ -119,11 +121,14 @@
 				<label>h :　   <input id="height" type="number" value="1" max="420" min="0" /> </label>
 				<label>回転 :   <input id="transform_rotate" type="number" value="0" max="720" min="-720" />  </label>
 				<label>拡大率X : <input id="transform_scaleX" type="number" value="1" max="10" min="0" /> </label>
-				<label>拡大率X : <input id="transform_scaleY" type="number" value="1" max="10" min="0" /> </label>
+				<label>拡大率Y : <input id="transform_scaleY" type="number" value="1" max="10" min="0" /> </label>
+				<label>角丸 :    <input id="border-radius" type="number" value="1" max="100" min="0" /> </label>
+				<br />
+				<label>背景、文字色 :<input type="text" maxlength="6" size="6" id="colorSelector" value="#522F7F" /></label>
 				<br />
 				<hr />
 				以下はタイムライン稼働中に切り替え不可能<br />
-				<label>画像 : <input id="image_url" type="text" /> </label><br />
+				<label>画像 : <input id="image_url" type="text" value="http://s1-02.twitpicproxy.com/photos/full/526829532.jpg"/> </label><button id="clear_img">画像クリア</button><br />
 				<label>イージング : <input id="ease_type" type="text" /> </label>
 				
 			</div>

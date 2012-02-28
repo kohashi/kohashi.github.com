@@ -7,6 +7,8 @@
 			}
 		}
 		
+		
+		// tab view ----------------
 		var $tab_title_input = $( "#tab_title")
 		var tab_counter = 5;
 		var tab_content_wrapper = '';
@@ -74,7 +76,7 @@
 			  $('.demo_box').css({
 				position: 'absolute',
 					top:'100px', left:'15px',
-					width:'60px', height:'60px',
+					width:'150px', height:'150px',
 					'-webkit-border-radius':'5px',
 					'-moz-border-radius':'5px',
 					background:'#522F7F',
@@ -134,6 +136,11 @@
 			.click(function(){
 					$( "#dialog:ui-dialog" ).dialog( "destroy" );
 					$( "#dialog-message" ).dialog( "open" );
+			});	
+		$('#clear_img')
+			.button()
+			.click(function(){
+					currentObject.css('backgroundImage', 'none')
 			});	
 		//------------------------------------
 		
@@ -228,7 +235,26 @@
 		setSlider("transform_rotate");
 		setSlider("transform_scaleX", {step: 0.1});
 		setSlider("transform_scaleY", {step: 0.1});
+		setSlider("border-radius");
 		functionChain.push(function(name, value){
 			currentObject.css(name, value)
 		})
+		
+		// image setting
+		$("#image_url").on('input', function(){
+			currentObject.css('backgroundImage', 'url(' + $(this).val() +')')
+		})
+		// color setting
+		var colorInput = $('#colorSelector');
+		colorInput.ColorPicker({
+			color: colorInput.val() || '#0000ff',
+			onChange: function (hsb, hex, rgb) {
+				$("#colorSelector").val('#' + hex);
+				currentObject.css('backgroundColor', '#' + hex);
+			},
+			onShow : function(colpkr){
+				$(colpkr).css('z-index',9999)
+			}
+		});
+		
 	});
