@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>jQuery-keyframe Animation</title>
+		<link type="text/css" href="../css/ui-darkness/jquery-ui-1.8.17.custom.css" rel="stylesheet" />	
+		<script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../js/jquery-ui-1.8.17.custom.min.js"></script>
+		<script type="text/javascript" src="./jquery.kfAnimation.1.1.js"></script>
+		<script type="text/javascript" src="../js/underscore.js"></script>
+		<script type="text/javascript" src="../js/backbone.js"></script>
+		<script type="text/javascript" src="./jq_my.js"></script>
+		
+		<script type="text/javascript" src="./bkbn_my.js"></script>
+		<style type="text/css">
+			/*demo page css*/
+			body{ font: 62.5% "Trebuchet MS", sans-serif; margin: auto; width:980px;}
+			h1 {font-size: 3em;}
+			h1 sub{ font-size : 65%; color:gray;}
+			.demoHeaders { margin-top: 2em; }
+			#dialog_link {padding: .4em 1em .4em 20px;text-decoration: none;position: relative;}
+			#dialog_link span.ui-icon {margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
+			ul#icons {margin: 0; padding: 0;}
+			ul#icons li {margin: 2px; position: relative; padding: 4px 0; cursor: pointer; float: left;  list-style: none;}
+			ul#icons span.ui-icon {float: left; margin: 0 4px;}
+			/*  tabs manipulation */
+			#dialog label, #dialog input { display:block; }
+			#dialog label { margin-top: 0.5em; }
+			#dialog input, #dialog textarea { width: 95%; }
+			#add_tab { cursor: pointer; }
+			#tabs li .ui-icon-close { float: left; margin: 0.4em 0.2em 0 0; cursor: pointer; }	
+			#demo_envelope{position : relative; height : 750px; padding : 0px 10px;}
+			#demo_envelope>div { position : absolute; }
+			.code_area { width : 600px; height:50px; color : #006666; font-family : Monaco, 'Courier New' !important; font-size:12px !important; padding : 6px;}
+			#tabs .ui-tabs-panel  { padding : 3px 3px !important;}
+			#demo_stage_size_disp { position : absolute; left : 430px; top : 280px; color : #eee; }
+			#infoArea { font-size: 1.3em; line-height: 1.1; margin: 1em 0; width: 750px; padding:0px 60px;}
+			#demo_stage { width : 320px; position : absolute; border : solid 1px gray; top : 20px; left : 90px; height : 418px; }
+			
+			
+			#tabs { margin-top: 1em; width: 630px; height :100px; top : 620px; left : 0px; }
+			#demo_area { width: 530px; height : 470px; position : absolute; top : 150px; left : 0px; overflow:hidden;} 
+			#prop_area { width: 440px; height : 454px; position : absolute; top : 150px; left : 540px; overflow:hidden;padding:10px; } 
+			#timeline_area { width:980px; top:0px; left:0px; height:140px;}
+			#button_area { width:400px; top:660px; left:640px;}
+		</style>	
+	</head>
+	<body>
+	<div style="text-align:left;">
+	<h1>jQuery kfAnimation  <sub>ver.1.1</sub></h1>
+		<!-- view template -->
+<script></script>aaa
+            <div id="target"></div>
+	
+		<!-- Tabs -->
+		<h2 class="demoHeaders">Demo </h2>
+<div id="demo_envelope">
+	<div id="tab_dialog" title="Tab data">
+		<form>
+			<fieldset class="ui-helper-reset">
+				<label for="tab_title">Title</label>
+				<input type="text" name="tab_title" id="tab_title" value="タイトル" class="ui-widget-content ui-corner-all" />
+			</fieldset>
+		</form>
+	</div>
+	<div id="dialog-message" title="All Data Clear">
+	<p>
+		<span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
+		All data will be clear. ok?
+	</p>
+	</div>
+	
+		<!-- buttons -->
+		<div id="button_area">
+			<span style="font-size: 1.3em;">Examples : </span>
+			<button id="add_tab">タブを追加</button>
+			<button id="execute">実行!</button>
+			<button id="save" >現在のデータを保存する</button>
+			<button id="reset">リセット</button>
+			<button id="clearData" style="margin-left: 20px;">Clear Data</button>
+		</div>
+		
+		<!-- timeline -->
+		<div id="timeline_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+			タイムラインを
+		</div>
+		
+		<!-- props -->
+		
+		<!-- demo area -->
+		<div id="demo_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+			<div id="demo_stage">
+				<div id="box1" class="demo_box">
+				#box1&nbsp;
+				</div>
+				<div id="box2" class="demo_box">
+				#box2&nbsp;
+				</div>
+			</div>
+			<p id="demo_stage_size_disp">
+			iPhone Size.  <br />
+			w320px , h418px
+			</p>
+		</div>
+		<!-- props -->
+		<div id="prop_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+	        プロパティ:
+	        <script id="prop-template" type="text/html">
+	              <input class="name-input" type="text" value="<%= alpha %>"/>
+	                <!--   <input class="save-input" type="button" value="save"/>
+	                <input class="cancel-input" type="button" value="cancel"/>
+	                <input class="delete-input" type="button" value="delete"/> -->
+	        </script>
+			<div id="prop_detail">
+				<label>透明度 : <input id="opacity" type="number" value="1" min="0" max="1" /></label>
+				<label>x :    <input id="left" type="number" max="520" min="-480"  /></label>
+				<label>y :　   <input id="top" type="number" max="520" min="-480"  /></label>
+				<label>w :　   <input id="width" type="number" max="320" min="0" /></label>
+				<label>h :　   <input id="height" type="number" value="1" max="420" min="0" /> </label>
+				<label>回転 :   <input id="transform_rotate" type="number" value="0" max="720" min="-720" />  </label>
+				<label>拡大率X : <input id="transform_scaleX" type="number" value="1" max="10" min="0" /> </label>
+				<label>拡大率X : <input id="transform_scaleY" type="number" value="1" max="10" min="0" /> </label>
+				<br />
+				<hr />
+				以下はタイムライン稼働中に切り替え不可能<br />
+				<label>画像 : <input id="image_url" type="text" /> </label><br />
+				<label>イージング : <input id="ease_type" type="text" /> </label>
+				
+			</div>
+		</div>
+		<!-- tabs area -->
+		<div id="tabs">
+			<ul id="tabs_list">
+				<li><a href="#tabs-1">1</a></li>
+				<li><a href="#tabs-2">2</a></li>
+				<li><a href="#tabs-3">3</a></li>
+				<li><a href="#tabs-4">4</a></li>
+				<li><a href="#tabs-5">5</a></li>
+			</ul>
+			<!-- sample start -->
+			<div id="tabs-1" ><textarea class="code_area">
+$('#box1').keyframe({
+  300: {
+    left: '200px'
+  },
+  500: {
+    left: '150px'
+  },
+  1000: {
+    left: '400px'
+  }
+}, 'easeOut');
+
+// 第一引数 : アニメーション定義
+// 第二匹数 : (optional) イージングを設定. 
+// ease, ease-out, ease-in, ease-in-out,
+// linear, cubic-bezier(x1, y1, x2, y2)
+//   デフォルト : ease.
+//
+// (例： cubic-bezier(0.5, 0.2, 0.3, 1.0))
+
+</textarea></div>
+			<div id="tabs-2" ><textarea class="code_area">
+$('#box1').keyframe({
+  700: {
+    height: '300px',
+    width: '300px',
+    top: '20px'
+  },
+  1400: {
+    width: '60px',
+    height: '60px',
+    left: '200px',
+  },
+  1100: {
+    top: '200px'
+  },
+  1600: {
+    width:'80px',
+    height:'80px',
+    left:'190px',
+    top: '100px'
+  }
+});
+</textarea></div>
+			<div id="tabs-3" ><textarea class="code_area">
+$('#box1').keyframe({
+  start: {
+    opacity: 0.8,
+    top: '100px', left: '15px',
+    width: '60px', height:'60px',
+  },
+  100: {
+    left: '50px',
+    opacity: 1
+  },
+  257: {
+    left: '200px',
+    width: 200
+  },
+  560: {
+    top: '30px',
+    height: '60px'
+  },
+  900: {
+    opacity: 1,
+    height: '120px',
+    top: '390px',
+    'line-height': '60px'
+  },
+  920: {
+    opacity:0.6,
+    height: '30px',
+    'line-height': '30px'
+  }
+});
+			</textarea></div>
+			<div id="tabs-4" ><textarea class="code_area">
+// 色を変更します.
+var p = '#522F7F', g = '#1EF976',
+    r = '#C12D10',
+    bg_p = {'background-color':p},
+    bg_g = {'background-color':g};
+
+$('#box1').keyframe({
+  start: {
+    opacity: 1,
+    'background-color': p,
+    top: '170px', left: '265px',
+    width: '60px', height:'60px'
+  },
+  
+  // 点滅！
+  100: bg_p,
+  300: bg_g,
+  550: bg_p,
+  850: bg_g,
+  1150: bg_p,
+  1350: bg_g,
+  1600: bg_p,
+  
+  // 爆発の前準備(嵐の前の静けさ…)
+  1950: {
+    'background-color': p,
+    top: '170px', left: '265px',
+    width: '60px', height:'60px',
+    opacity: 1
+  },
+  
+  // 爆発！
+  2200: {
+    'background-color': r,
+    width:'1800px', height:'600px',
+    top: '-88px', left: '-600px',
+    opacity:0
+  }
+  
+}, 'easeOutExpo');
+		</textarea></div>
+			<div id="tabs-5" ><textarea class="code_area">
+// 2つ同時に動かす
+$('#box1').keyframe({
+  start:{opacity: 1,
+  top: '100px',
+  width: '60px', height:'60px'},
+  300: {
+    left: '200px'
+  },
+  500: {
+    left: '150px'
+  },
+  1000: {
+    left: '460px'
+  }
+}, 'easeOut');
+
+$('#box2').keyframe({
+  300: {
+    left: '260px'
+  },
+  500: {
+    left: '310px'
+  },
+  1000: {
+    left: '15px'
+  }
+}, 'easeOut');
+		</textarea></div>
+
+			<!-- sample end -->
+			
+		</div>
+
+</div>
+<!-- info -->
+		<div id="infoArea">
+			<hr style ="margin : 60px 0px;">
+			<h2 class="demoHeaders">Infomation. </h2>
+
+			<h3>About&#8201;&mdash;</h3>
+			<p>jquery-keyframeAnimationを使用すると、 CSS3 keyframes animation がカンタンに作れます。また、ミリ秒ベースでのわかりやすい記述が可能です。</p>
+			<p>また、jquery-keyframeAnimation はデザイナーさんにも使いやすく作られています。DOMオブジェクトは、アニメーションの終了時の場所に固定されます。(ふつう、CSS3-keyframes-animationはアニメーション終了後に最初の位置に戻ってしまいます。これはデザイナさんを混乱させます。)</p>
+			<p>jquery-keyframeAnimation is Copyright <a href="https://twitter.com/#!/hako584">@hako584</a>. Under the MIT or GPL3 licenses.</p>
+			<hr />
+			
+			<h3>Todo&#8201;&mdash;</h3>
+			<ul>
+			  <li>複数のアニメーション処理の並行実行への対応.</li>
+			  <li>初期化処理</li>
+			</ul>
+			<hr />
+			
+			<h3>Download&#8201;&mdash;</h3>
+			<p>jQuery.kfAnimation
+			  <a target="_blank" href="https://raw.github.com/kohashi/jQuery-Keyframes-animation/master/jquery.kfAnimation.0.1.js">v0.0.1</a>
+			</p>
+		</div>
+		</div>
+	</body>
+</html>
+
+
