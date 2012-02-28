@@ -3,248 +3,15 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>jQuery-keyframe Animation</title>
-		<link type="text/css" href="css/ui-darkness/jquery-ui-1.8.17.custom.css" rel="stylesheet" />	
-		<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
-		<script type="text/javascript" src="js/jquery-ui-1.8.17.custom.min.js"></script>
-		<script type="text/javascript" src="jquery.kfAnimation.1.1.js"></script>
-		<script type="text/javascript" src="js/underscore.js"></script>
-		<script type="text/javascript" src="js/backbone.js"></script>
-		<script type="text/javascript">
-	$(function() {
-		var $tab_title_input = $( "#tab_title")
-		var tab_counter = 5;
-		var tab_content_wrapper = '';
-
-		// tabs init with a custom tab template and an "add" callback filling in the content
-		var $tabs = $( "#tabs").tabs({
-			tabTemplate: "<li><a href='#{href}'>#{label}</a> <span class='ui-icon ui-icon-close'>Remove Tab</span></li>",
-			add: function( event, ui ) {
-				$( ui.panel ).append( '<textarea class="code_area">' + tab_content_wrapper + '</textarea>' );
-			},
-			select: function(event, ui) {
-				console.log(ui.panel)
-			}
-		});
+		<link type="text/css" href="../css/ui-darkness/jquery-ui-1.8.17.custom.css" rel="stylesheet" />	
+		<script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="../js/jquery-ui-1.8.17.custom.min.js"></script>
+		<script type="text/javascript" src="./jquery.kfAnimation.1.1.js"></script>
+		<script type="text/javascript" src="../js/underscore.js"></script>
+		<script type="text/javascript" src="../js/backbone.js"></script>
+		<script type="text/javascript" src="./jq_my.js"></script>
 		
-		// modal dialog init: custom buttons and a "close" callback reseting the form inside
-		var $dialog = $( "#tab_dialog" ).dialog({
-			autoOpen: false,
-			modal: true,
-			buttons: {
-				Add: function() {
-					addTab($tab_title_input.val());
-					$( this ).dialog( "close" );
-				},
-				Cancel: function() {
-					$( this ).dialog( "close" );
-				}
-			},
-			open: function() {
-				$tab_title_input.focus();
-			},
-			close: function() {
-				$form[ 0 ].reset();
-			}
-		});
-
-		// addTab form: calls addTab function on submit and closes the dialog
-		var $form = $( "form", $dialog ).submit(function(){
-			addTab($tab_title_input.val());
-			$dialog.dialog( "close" );
-			return false;
-		});
-
-		// actual addTab function: adds new tab using the title input from the form above
-		function addTab(title, content) {
-			tab_counter++;
-			var tab_title = title || "t_"+ tab_counter;
-			tab_content_wrapper = content || '// input your code ';
-			$tabs.tabs( "add", "#tabs-" + tab_counter, tab_title );
-		}
-		
-		function getTabsData(){
-			var labels = $tabs.children().first().children().find('a');
-			var contents = $tabs.children('div').children('textarea')
-			var arr  = [];
-			for(var i=0; i<labels.length; i++){
-				arr[i] = {};
-				arr[i].title = labels.eq(i).text();
-				arr[i].content = contents.eq(i).val();
-			}
-			return arr;
-		}
-		
-		function reset_box(){
-			  $('.demo_box').css({
-				position: 'absolute',
-					top:'100px', left:'15px',
-					width:'60px', height:'60px',
-					'-webkit-border-radius':'5px',
-					'-moz-border-radius':'5px',
-					background:'#522F7F',
-					color:'#fff',
-					'font-weight':'bold',
-					'line-height':'60px',
-					'text-align':'center',
-					cursor: 'default',
-					opacity: 1
-				});
-				$('#box2').css({'left': '460px', background:'#965849'});
-			}
-		reset_box();
-
-		//--------------------------------
-		// close icon: removing the tab on click
-		// note: closable tabs gonna be an option in the future - see http://dev.jqueryui.com/ticket/3924
-		$( "#tabs span.ui-icon-close" ).live( "click", function() {
-			var index = $( "li", $tabs ).index( $( this ).parent() );
-			$tabs.tabs( "remove", index );
-		});
-		
-		// addTab button: just opens the dialog
-		$( "#add_tab" )
-			.button()
-			.click(function() {
-				$dialog.dialog( "open" );
-			});
-		$( "#reset" )
-			.button()
-			.click(function() {
-				reset_box();
-			});
-		//execute button
-		$( "#execute")
-			.button()
-			.click(function(){
-				var selectedId = $tabs.tabs('option', 'selected') ;
-				var targetId = $("#tabs_list").children().eq(selectedId).find("a").attr("href");
-				try {
-					eval($(targetId).find('textarea').val());
-				} catch(e) {
-					alert('It was a problem with your code!');
-				}
-			});
-		//save button
-		$('#save')
-			.button()
-			.click(function(){
-				var savedata = { idx : $tabs.tabs('option', 'selected') };
-				savedata.tabs = getTabsData();
-				localStorage['savedata'] = JSON.stringify(savedata);
-			});
-		//clearData button
-		$('#clearData')
-			.button()
-			.click(function(){
-					$( "#dialog:ui-dialog" ).dialog( "destroy" );
-					$( "#dialog-message" ).dialog( "open" );
-			});	
-		//------------------------------------
-		
-		//textarea configiration
-		$(document).on('keydown', 'textarea', function(e){
-			var kC = e.keyCode ? e.keyCode : e.charCode ? e.charCode : e.which;
-			if(kC == 9){ // 9 tab
-				if (this.setSelectionRange){
-					var o = this;
-					var sS = o.selectionStart;
-					var sE = o.selectionEnd;
-					o.value = o.value.substring(0, sS) + "\t" + o.value.substr(sE);
-					o.setSelectionRange(sS + 1, sS + 1);
-					o.focus();
-					return false;
-				}
-			}
-		})
-		
-		
-		//load function 
-		var savedata = localStorage['savedata'];
-		if(savedata){
-			//clear
-			while($tabs.children().length > 1){
-				$tabs.tabs( "remove", 0 );
-			}
-			
-			//load
-			savedata = JSON.parse(savedata);
-			var tabData = savedata.tabs;
-			for(var i=0; i<tabData.length; i++){
-				addTab(tabData[i].title,  tabData[i].content);
-			}
-			$tabs.tabs( "option", "selected", savedata.idx);
-		}
-		$( "#dialog-message" ).dialog({
-			autoOpen: false,
-			modal: true,
-			buttons: {
-				Ok: function(){
-					delete localStorage['savedata'];
-					location.href = location.href;
-					$( this ).dialog( "close" );
-				},
-				cancel:function(){
-					$( this ).dialog( "close" );
-				}
-			}
-		});
-
-	});
-		</script>
-		
-		<script type="text/javascript">
-		$(function(){
-			console.log('aaa')
-			var PropModel = Backbone.Model.extend({
-			    initialize: function () {
-			        this.set({
-			            domId: 'tweet_' + this.cid
-			        })
-			    },
-
-				defaults :{
-					alpha : 1,
-					display : true,
-					frame : 0
-				},
-				destroy : {
-					
-				},
-				validate: function(){
-					
-				}
-			});
-            var PropCollection = Backbone.Collection.extend({
-            	model : PropModel, //なくてもOKらしい
-            	initialize : function(){
-            		//this.bind("add", function(obj){}, this) //コレクション追加時のイベント
-            	}
-            });
-            var PropView = Backbone.View.extend({
-            	tagName : "div", //省略可能？ラップするタグ
-            	template : _.template($("#prop-template").html()),
-            	events: { //イベントハンドラのマッピングらしい
-            		//"click input" : "_onChange"
-            	},
-            	initialize : function(){
-            		this.model.bind("change", this.render, this);
-            	},
-            	add_me : function(){
-            		var name = "aaaa"//$("#hoge").val()
-            		var prop = new PropModel({alpha:0.3})
-            		this.model.add(prop);
-            	},
-            	render : function(){
-            		var data = this.model.toJSON();//モデル取得
-            		console.log(data)
-            		var html = this.template(data[0]);//テンプレート適用
-            		$(this.el).html(html); // 上書き
-            	},
-            	el : $('#target')
-            });
-            window.App = new PropView({ model: new PropCollection() });
-          });
-		</script>
+		<script type="text/javascript" src="./bkbn_my.js"></script>
 		<style type="text/css">
 			/*demo page css*/
 			body{ font: 62.5% "Trebuchet MS", sans-serif; margin: auto; width:980px;}
@@ -273,7 +40,7 @@
 			
 			#tabs { margin-top: 1em; width: 630px; height :100px; top : 620px; left : 0px; }
 			#demo_area { width: 530px; height : 470px; position : absolute; top : 150px; left : 0px; overflow:hidden;} 
-			#prop_area { width: 440px; height : 470px; position : absolute; top : 150px; left : 540px; overflow:hidden;} 
+			#prop_area { width: 440px; height : 454px; position : absolute; top : 150px; left : 540px; overflow:hidden;padding:10px; } 
 			#timeline_area { width:980px; top:0px; left:0px; height:140px;}
 			#button_area { width:400px; top:660px; left:640px;}
 		</style>	
@@ -282,12 +49,6 @@
 	<div style="text-align:left;">
 	<h1>jQuery kfAnimation  <sub>ver.1.1</sub></h1>
 		<!-- view template -->
-        <script id="prop-template" type="text/html">
-              <input class="name-input" type="text" value="<%= alpha %>"/>
-                <!--   <input class="save-input" type="button" value="save"/>
-                <input class="cancel-input" type="button" value="cancel"/>
-                <input class="delete-input" type="button" value="delete"/> -->
-        </script>
 <script></script>aaa
             <div id="target"></div>
 	
@@ -325,28 +86,47 @@
 		</div>
 		
 		<!-- props -->
-		<div id="prop_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
-			プロパティを
-		</div>
 		
 		<!-- demo area -->
 		<div id="demo_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 			<div id="demo_stage">
+				<div id="box1" class="demo_box">
+				#box1&nbsp;
+				</div>
+				<div id="box2" class="demo_box">
+				#box2&nbsp;
+				</div>
 			</div>
 			<p id="demo_stage_size_disp">
 			iPhone Size.  <br />
 			w320px , h418px
 			</p>
-			<div id="box1" class="demo_box">
-			#box1&nbsp;
-			</div>
-			<div id="box2" class="demo_box">
-			#box2&nbsp;
-			</div>
 		</div>
 		<!-- props -->
 		<div id="prop_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
-			プロパティを
+	        プロパティ:
+	        <script id="prop-template" type="text/html">
+	              <input class="name-input" type="text" value="<%= alpha %>"/>
+	                <!--   <input class="save-input" type="button" value="save"/>
+	                <input class="cancel-input" type="button" value="cancel"/>
+	                <input class="delete-input" type="button" value="delete"/> -->
+	        </script>
+			<div id="prop_detail">
+				<label>透明度 : <input id="opacity" type="number" value="1" min="0" max="1" /></label>
+				<label>x :    <input id="left" type="number" max="520" min="-480"  /></label>
+				<label>y :　   <input id="top" type="number" max="520" min="-480"  /></label>
+				<label>w :　   <input id="width" type="number" max="320" min="0" /></label>
+				<label>h :　   <input id="height" type="number" value="1" max="420" min="0" /> </label>
+				<label>回転 :   <input id="transform_rotate" type="number" value="0" max="720" min="-720" />  </label>
+				<label>拡大率X : <input id="transform_scaleX" type="number" value="1" max="10" min="0" /> </label>
+				<label>拡大率X : <input id="transform_scaleY" type="number" value="1" max="10" min="0" /> </label>
+				<br />
+				<hr />
+				以下はタイムライン稼働中に切り替え不可能<br />
+				<label>画像 : <input id="image_url" type="text" /> </label><br />
+				<label>イージング : <input id="ease_type" type="text" /> </label>
+				
+			</div>
 		</div>
 		<!-- tabs area -->
 		<div id="tabs">
