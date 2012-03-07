@@ -11,6 +11,7 @@
 		<script type="text/javascript" src="./jquery.kfAnimation.1.1.js"></script>
 		<script type="text/javascript" src="../js/underscore.js"></script>
 		<script type="text/javascript" src="../js/backbone.js"></script>
+		<script type="text/javascript" src="../js/jquery.fixedtable.js"></script>
 		<script type="text/javascript" src="./jq_my.js"></script>
 		
 		<script type="text/javascript" src="./bkbn_my.js"></script>
@@ -38,23 +39,26 @@
 			#demo_stage_size_disp { position : absolute; left : 430px; top : 280px; color : #eee; }
 			#infoArea { font-size: 1.3em; line-height: 1.1; margin: 1em 0; width: 750px; padding:0px 60px;}
 			#demo_stage { width : 320px; position : absolute; border : solid 1px gray; top : 20px; left : 90px; height : 418px; }
-			
+			#image_url { width: 270px;}
+			.fixedArea th {width : 10px; height:20px;}
+			.fixedArea td {width : 10px; height:20px; border:solid gray; border-width:0 0 1px 1px;} 
+			.fixedArea .fixedHead td {width : 54px;} 
+			.fixedArea table {border-spacing: 0px; border:solid gray; border-width:1px 1px 0 0;} 
 			
 			#tabs { margin-top: 1em; width: 630px; height :100px; top : 620px; left : 0px; }
 			#demo_area { width: 530px; height : 470px; position : absolute; top : 150px; left : 0px; overflow:hidden;} 
-			#prop_area { width: 440px; height : 454px; position : absolute; top : 150px; left : 540px; overflow:hidden;padding:10px; } 
-			#timeline_area { width:980px; top:0px; left:0px; height:140px;}
-			#button_area { width:400px; top:660px; left:640px;}
+			#prop_area { width: 425px; height : 454px; position : absolute; top : 150px; left : 540px; overflow:hidden;padding:10px; } 
+			#timeline_area { width:980px; top:0px; left:0px; height:130px; padding:5px 10px;}
+			#button_area { width:350px; top:660px; left:640px;}
 		</style>	
 	</head>
 	<body>
 	<div style="text-align:left;">
 	<h1>jQuery kfAnimation  <sub>ver.1.1</sub></h1>
-		<!-- view template -->
-<script></script>aaa
             <div id="target"></div>
 	
 		<!-- Tabs -->
+		<button id="relaod_tl">タイムライン構築</button>
 		<h2 class="demoHeaders">Demo </h2>
 <div id="demo_envelope">
 	<div id="tab_dialog" title="Tab data">
@@ -84,7 +88,178 @@
 		
 		<!-- timeline -->
 		<div id="timeline_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
-			タイムラインを
+			<div id="timeline" class="tableDiv"></div>
+			<div id="tableDiv_Arrays">
+       <table id="timeline_table" class="FixedTables" style="display:none;">
+            <thead>
+                <tr>
+                    <th>
+                        オブジェクト名/フレームNo
+                    </th>
+                    <th>
+                        1　
+                    </th>
+                    <th>
+                        2
+                    </th>
+                    <th>
+                        3
+                    </th>
+                    <th>
+                        4
+                    </th>
+                    <th>
+                        5
+                    </th>
+                    <th>
+                        6
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        Declare an array
+                    </td>
+                    <td>
+                        int[] x = new int[5];
+                    </td>
+                    <td>
+                        // key only integer or string<br />
+                        // value any<br />
+                        $array = array(1, 2, 3, 4, 5);<br />
+                        $arr = array(&quot;foo&quot; =&gt; &quot;bar&quot;, 12 =&gt; true);
+                    </td>
+                    <td>
+                        // key only integer or string<br />
+                        // value any<br />
+                        $array = array(1, 2, 3, 4, 5);<br />
+                        $arr = array(&quot;foo&quot; =&gt; &quot;bar&quot;, 12 =&gt; true);
+                    </td>
+                    <td>
+                        var arr:Array = [1,2,3];
+                    </td>
+                    <td>
+                        new Array()<br />
+                        new Array(len)<br />
+                        new Array([item0,[item1,[item2,...]]]<br />
+                        //Example<br />
+                        var objArray=new Array();<br />
+                        var arr=[0,1,2,3,4,5,6];
+                    </td>
+                    <td>
+                        a = [ 1, 'cat', 3.14 ]
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Initialize an array
+                    </td>
+                    <td>
+                        int[] x = new int[5] {<br />
+                        1, 2, 3, 4, 5};
+                    </td>
+                    <td>
+                        $arr = array(<br />
+                        &nbsp;&nbsp;&nbsp; &quot;somearray&quot; =&gt; array(<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6 =&gt; 5,<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 13 =&gt; 9,<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;a&quot; =&gt; 42));
+                    </td>
+                    <td>
+                        $arr = array(<br />
+                        &nbsp;&nbsp;&nbsp; &quot;somearray&quot; =&gt; array(<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6 =&gt; 5,<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 13 =&gt; 9,<br />
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;a&quot; =&gt; 42));
+                    </td>
+                    <td>
+                        var arr:Array = new Array(1,2,3);
+                    </td>
+                    <td>
+                        var arr=[0,1,2,3,4,5,6];<br />
+                        var complexArray = [[1,{x:1, y:2}], [2, {x:3, y:4}]];
+                    </td>
+                    <td>
+                        inst_section = { 'cello' =&gt; 'string', 'trumpet' =&gt; 'brass', 'violin' =&gt;
+                        'string' }
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Add or remove element
+                    </td>
+                    <td>
+                        &nbsp;
+                    </td>
+                    <td>
+                        $arr[&quot;x&quot;] = 42;
+                        <br />
+                        // This adds a new element to<br />
+                        // the array with key &quot;x&quot;<br />
+                        $array[] = 6;<br />
+                        unset($arr[5]);
+                        <br />
+                        // This removes the element from the array
+                    </td>
+                    <td>
+                        $arr[&quot;x&quot;] = 42;
+                        <br />
+                        // This adds a new element to<br />
+                        // the array with key &quot;x&quot;<br />
+                        unset($arr[5]);
+                        <br />
+                        // This removes the element from the array
+                    </td>
+                    <td>
+                        arr.push(item);<br />
+                        arr.splice(at,count);
+                    </td>
+                    <td>
+                        // Add elements<br />
+                        objArray.push([value1[,value2[,....]]]);<br />
+                        //[1,2,3, 4].push("a","b") result is [1,2,3,4,"a","b"]<br />
+                        objArray.pop(); //remove the last element[1,2,3, 4].pop() result is [1,2,3]
+                        <br />
+                        objArray.shift(); //remove the first element.<br />
+                        objArray.splice(start, deleteCount, [item1[, item2[, . . . [,itemN]]]])
+                    </td>
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Reallocate array
+                    </td>
+                    <td>
+                        n/a
+                    </td>
+                    <td>
+                        // This deletes the whole array
+                        <br />
+                        unset($arr);
+                    </td>
+                    <td>
+                        // This deletes the whole array<br />
+                        unset($arr);&nbsp;&nbsp;&nbsp;&nbsp;
+                    </td>
+                    <td>
+                        n/a
+                    </td>
+                    <td>
+                        n/a
+                    </td>
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+            </tbody>           
+        </table>
+
+
+</div>
+
 		</div>
 		
 		<!-- props -->
@@ -129,8 +304,16 @@
 				<hr />
 				以下はタイムライン稼働中に切り替え不可能<br />
 				<label>画像 : <input id="image_url" type="text" value="http://s1-02.twitpicproxy.com/photos/full/526829532.jpg"/> </label><button id="clear_img">画像クリア</button><br />
-				<label>イージング : <input id="ease_type" type="text" /> </label>
-				
+				<label>イージング : <input id="ease_type" type="text" /> </label><br />
+				<label>フリー(JSON-CSS) : <textarea id="other_css"></textarea> <a href="#!" id="dialog_button">?</a></label>
+				<div id="dialog" title="フリーJSON-CSSについて">
+	<p>JSONスタイルでCSSを定義してください. <br /> e.g) <pre>
+{
+	"background" : "blue",
+	"border" : "red solid 10px"
+}
+	</pre></p>
+</div>
 			</div>
 		</div>
 		<!-- tabs area -->
