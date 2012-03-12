@@ -58,8 +58,7 @@
             <div id="target"></div>
 	
 		<!-- Tabs -->
-		<button id="relaod_tl">タイムライン構築</button>
-		<h2 class="demoHeaders">Demo </h2>
+		<h2 class="demoHeaders">Timeline Editor </h2>
 <div id="demo_envelope">
 	<div id="tab_dialog" title="Tab data">
 		<form>
@@ -84,182 +83,16 @@
 			<button id="save" >現在のデータを保存する</button>
 			<button id="reset">リセット</button>
 			<button id="clearData" style="margin-left: 20px;">Clear Data</button>
+			<button id="add_object">オブジェクト追加</button>
+			
 		</div>
 		
 		<!-- timeline -->
 		<div id="timeline_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 			<div id="timeline" class="tableDiv"></div>
 			<div id="tableDiv_Arrays">
-       <table id="timeline_table" class="FixedTables" style="display:none;">
-            <thead>
-                <tr>
-                    <th>
-                        オブジェクト名/フレームNo
-                    </th>
-                    <th>
-                        1　
-                    </th>
-                    <th>
-                        2
-                    </th>
-                    <th>
-                        3
-                    </th>
-                    <th>
-                        4
-                    </th>
-                    <th>
-                        5
-                    </th>
-                    <th>
-                        6
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        Declare an array
-                    </td>
-                    <td>
-                        int[] x = new int[5];
-                    </td>
-                    <td>
-                        // key only integer or string<br />
-                        // value any<br />
-                        $array = array(1, 2, 3, 4, 5);<br />
-                        $arr = array(&quot;foo&quot; =&gt; &quot;bar&quot;, 12 =&gt; true);
-                    </td>
-                    <td>
-                        // key only integer or string<br />
-                        // value any<br />
-                        $array = array(1, 2, 3, 4, 5);<br />
-                        $arr = array(&quot;foo&quot; =&gt; &quot;bar&quot;, 12 =&gt; true);
-                    </td>
-                    <td>
-                        var arr:Array = [1,2,3];
-                    </td>
-                    <td>
-                        new Array()<br />
-                        new Array(len)<br />
-                        new Array([item0,[item1,[item2,...]]]<br />
-                        //Example<br />
-                        var objArray=new Array();<br />
-                        var arr=[0,1,2,3,4,5,6];
-                    </td>
-                    <td>
-                        a = [ 1, 'cat', 3.14 ]
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Initialize an array
-                    </td>
-                    <td>
-                        int[] x = new int[5] {<br />
-                        1, 2, 3, 4, 5};
-                    </td>
-                    <td>
-                        $arr = array(<br />
-                        &nbsp;&nbsp;&nbsp; &quot;somearray&quot; =&gt; array(<br />
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6 =&gt; 5,<br />
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 13 =&gt; 9,<br />
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;a&quot; =&gt; 42));
-                    </td>
-                    <td>
-                        $arr = array(<br />
-                        &nbsp;&nbsp;&nbsp; &quot;somearray&quot; =&gt; array(<br />
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6 =&gt; 5,<br />
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 13 =&gt; 9,<br />
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;a&quot; =&gt; 42));
-                    </td>
-                    <td>
-                        var arr:Array = new Array(1,2,3);
-                    </td>
-                    <td>
-                        var arr=[0,1,2,3,4,5,6];<br />
-                        var complexArray = [[1,{x:1, y:2}], [2, {x:3, y:4}]];
-                    </td>
-                    <td>
-                        inst_section = { 'cello' =&gt; 'string', 'trumpet' =&gt; 'brass', 'violin' =&gt;
-                        'string' }
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Add or remove element
-                    </td>
-                    <td>
-                        &nbsp;
-                    </td>
-                    <td>
-                        $arr[&quot;x&quot;] = 42;
-                        <br />
-                        // This adds a new element to<br />
-                        // the array with key &quot;x&quot;<br />
-                        $array[] = 6;<br />
-                        unset($arr[5]);
-                        <br />
-                        // This removes the element from the array
-                    </td>
-                    <td>
-                        $arr[&quot;x&quot;] = 42;
-                        <br />
-                        // This adds a new element to<br />
-                        // the array with key &quot;x&quot;<br />
-                        unset($arr[5]);
-                        <br />
-                        // This removes the element from the array
-                    </td>
-                    <td>
-                        arr.push(item);<br />
-                        arr.splice(at,count);
-                    </td>
-                    <td>
-                        // Add elements<br />
-                        objArray.push([value1[,value2[,....]]]);<br />
-                        //[1,2,3, 4].push("a","b") result is [1,2,3,4,"a","b"]<br />
-                        objArray.pop(); //remove the last element[1,2,3, 4].pop() result is [1,2,3]
-                        <br />
-                        objArray.shift(); //remove the first element.<br />
-                        objArray.splice(start, deleteCount, [item1[, item2[, . . . [,itemN]]]])
-                    </td>
-                    <td>
-                        &nbsp;
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Reallocate array
-                    </td>
-                    <td>
-                        n/a
-                    </td>
-                    <td>
-                        // This deletes the whole array
-                        <br />
-                        unset($arr);
-                    </td>
-                    <td>
-                        // This deletes the whole array<br />
-                        unset($arr);&nbsp;&nbsp;&nbsp;&nbsp;
-                    </td>
-                    <td>
-                        n/a
-                    </td>
-                    <td>
-                        n/a
-                    </td>
-                    <td>
-                        &nbsp;
-                    </td>
-                </tr>
-            </tbody>           
-        </table>
-
-
-</div>
-
+				<table id="timeline_table" class="FixedTables" style="display:none;"></table>
+			</div>
 		</div>
 		
 		<!-- props -->
@@ -281,7 +114,7 @@
 		</div>
 		<!-- props -->
 		<div id="prop_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
-	        プロパティ:
+	        オブジェクト名: <input type="text" id="keyframe_object_name" /><button id="delete_object">オブジェクト削除</button> <label>フレームNo: <span id="frame_no">12</span></label>
 	        <script id="prop-template" type="text/html">
 	              <input class="name-input" type="text" value="<%= alpha %>"/>
 	                <!--   <input class="save-input" type="button" value="save"/>

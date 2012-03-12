@@ -142,90 +142,12 @@
 			.click(function(){
 					currentObject.css('backgroundImage', 'none')
 			});	
-		$('#relaod_tl')
-			.button()
-			.click(function(){
-				//テーブル構築
-				 $('timeline_table').show()
-				var tbl = $('#timeline_table').empty();
-				tbl.append('<thead>').append('<tbody>');
-				
-				var test = {
-					obj1 : {
-						 0 : {opacity : 1},
-						10 : {opacity : 0}
-					},
-					obj2 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj3 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj4 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj5 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj6 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj7 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj8 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj9 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					}
-				}
-				//初期化
-				var thead = $('<tr>').appendTo(tbl.find('thead')).append('<th>オブジェクト名＼フレーム数</th>');
-				var tbodys = {};
-				for(var key in test){
-					tbodys[key] = $('<tr>').appendTo(tbl.find('tbody')).append('<td>' + key + '</td>')
-				}
-				//create table
-				for(var i=0; i< 120; i++){
-					if(i %5 == 0) thead.append('<th colspan="5">' + i + '</th>')
-					for(var key in test){
-						var obj = test[key][i];
-						if(obj){
-							tbodys[key].append('<td>　' + '</td>')
-						}else{
-							tbodys[key].append('<td>　</td>')
-						}
-					}
-				}
-				
-				
-				//タイムライン表示化
-				$('#timeline').empty();
-				tbl.clone().show().appendTo('#timeline').fixedTable({
-		            width: 960,
-		            height: 135,
-		            fixedColumns: 1,
-		            classHeader: "fixedHead",// header style
-		            classFooter: "fixedFoot",// footer style
-		            classColumn: "fixedColumn",// fixed column on the left  
-		            fixedColumnWidth: 160,// the width of fixed column on the left   
-		            outerId: 'timeline',// table's parent div's id 
-		            Contentbackcolor: "#FFFFFF",// tds' in content area default background color  
-		            Contenthovercolor: "#99CCFF", // tds' in content area background color while hover. 
-		            fixedColumnbackcolor:"#187BAF", // tds' in fixed column default background color  
-		            fixedColumnhovercolor:"#99CCFF" // tds' in fixed column background color while hover.  
-		        });
-		        $('.fixedContainer table').css('table-layout','fixed')
-			})
+			
+		$('#add_object')
+			.button();
+			
+		$('#delete_object')
+			.button();
 		//------------------------------------
 		
 		//textarea configiration
@@ -309,7 +231,7 @@
 			});
 			input.attr("max", option.max)
 			input.attr("min", option.min);
-			$("<span> (" + option.min + " - " + option.max + ") </span>" ).insertAfter( input )
+			$('<span> (' + option.min + ' - ' + option.max + ') </span> <label><input type="checkbox" />アニメ化</label>' ).insertAfter( input )
 		}
 		setSlider("opacity", {step: 0.01});
 		setSlider("top");
