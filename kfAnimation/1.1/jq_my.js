@@ -1,12 +1,5 @@
 	$(function() {
 		window.currentObject = $("#box1")
-		window.functionChain = [];
-		window.callChain = function(obj){
-			for(var i=0; i<functionChain.length; i++){
-				functionChain[i].apply(obj, _.rest(arguments));
-			}
-		}
-		
 		
 		// tab view ----------------
 		var $tab_title_input = $( "#tab_title")
@@ -198,79 +191,5 @@
 			}
 		});
 
-	//----------
-	// prop area
-		var setSlider = function(sourceId, option){
-			var input = $("#" + sourceId);
-			var option = option || {};
-			option.max = option.max || input.attr("max") || 100; //max:0 のときに100になっちゃうが、そんなパターンないだろー
-			option.min = option.min || input.attr("min") || 0;
-			option.val = option.val || input.val()       || 0;
-			option.step = option.step || input.attr("step") || 1;
-			
-			if(!input.val()){
-				input.val(option.val)
-			}
-			
-			var slider = $( "<div class='prop_slider'></div>" ).insertAfter( input ).slider({
-				min: +option.min,
-				max: +option.max,
-				range: "min",
-				step : +option.step,
-				//value: input[ 0 ].selectedIndex + 1,
-				value : +option.val,
-				slide: function( event, ui ) {
-					//input[ 0 ].selectedIndex = ui.value - 1;
-					input.val(ui.value)
-					callChain(this, sourceId, ui.value);
-				}
-			});
-			input.on('input', function() {
-				slider.slider( "value", $(this).val() );
-				callChain(this, sourceId, $(this).val());
-			});
-			input.attr("max", option.max)
-			input.attr("min", option.min);
-			$('<span> (' + option.min + ' - ' + option.max + ') </span> <label><input type="checkbox" />アニメ化</label>' ).insertAfter( input )
-		}
-		setSlider("opacity", {step: 0.01});
-		setSlider("top");
-		setSlider("left");
-		setSlider("width");
-		setSlider("height");
-		setSlider("transform_rotate");
-		setSlider("transform_scaleX", {step: 0.1});
-		setSlider("transform_scaleY", {step: 0.1});
-		setSlider("border-radius");
-		functionChain.push(function(name, value){
-			currentObject.css(name, value)
-		})
-		
-		// image setting
-		$("#image_url").on('input', function(){
-			currentObject.css('backgroundImage', 'url(' + $(this).val() +')')
-		})
-		// color setting
-		var colorInput = $('#colorSelector');
-		colorInput.ColorPicker({
-			color: colorInput.val() || '#0000ff',
-			onChange: function (hsb, hex, rgb) {
-				$("#colorSelector").val('#' + hex);
-				currentObject.css('backgroundColor', '#' + hex);
-			},
-			onShow : function(colpkr){
-				$(colpkr).css('z-index',9999)
-			}
-		});
-		// other css setting
-		$("#other_css").on('input', function(){
-			try{
-				var obj = JSON.parse($(this).val())
-				currentObject.css(obj);
-			}catch(e){
-			}
-		});
-		$( "#dialog" ).dialog({autoOpen:false, position:'right'});
-		$("#dialog_button").on("click", function(){$( "#dialog" ).dialog("open")});
 		
 	});
