@@ -65,27 +65,20 @@ $(function(){
 	*/
 	
 	App.Views.PropView = Backbone.View.extend({
-		tagName : "div", //省略可能？ラップするタグ
 		el : $('#prop_detail'),
-		//template : _.template($("#prop-template").html()),
 		//model : new App.Models.PropModel, //【追記】今回のように、viewとmodelを入れ替えるならここに有るべきじゃないと思う
-		
 		initialize : function(){
-			console.log(this.model)
-			this.model.on("change", this.render, this);//modelが変更された時に、renderイベントを走らせる。第3引数"this"を与えることで、this.render内でのthis参照が可能
-			
-			//以下は、Backbone.js 0.5.2 以前のバージョン用。上記と同じ事をしている。
-			//_.bindAll(this, "render");
-			//this.model.bind("change", this.render);
-			
+			this.model && this.setModel(this.model);
 		},
+		/** Viewに関連付けられているModelを変更する */
 		setModel: function(model){
-			this.model.off("change", this.render, this);//古いModelから削除
+			this.model && this.model.off("change", this.render, this);//古いModelから削除
 			
 			this.model = model;//新しいModel適用
-			this.model.on("change", this.render, this);
+			this.model.on("change", this.render, this);//modelが変更された時に、renderイベントを走らせる。第3引数"this"を与えることで、this.render内でのthis参照が可能
 			this.loadFrom(this.model);
 		},
+		/** 描画 */
 		render : function(){
 			console.log("レンダー！！");
 			
@@ -189,12 +182,15 @@ $(function(){
 	Backbone.history.start();
 	
 	
-	App.instances.PropView = new App.Views.PropView({ model: new App.Models.PropModel() });
+	App.instances.PropView = new App.Views.PropView();
 	
 	
 	
 	//----------
 	// prop area
+	
+		var sliderInputs = {};
+		//スライダ初期化（生成）、イベントバインド
 		var setSlider = function(sourceId, option){
 			var input = $("#" + sourceId);
 			var option = option || {};
@@ -208,6 +204,7 @@ $(function(){
 				input.val(option.val)
 			}
 			
+			//スライダ生成
 			var slider = $( "<div class='prop_slider'></div>" ).insertAfter( input ).slider({
 				min: +option.min,
 				max: +option.max,
@@ -227,6 +224,7 @@ $(function(){
 			input.attr("max", option.max);
 			input.attr("min", option.min);
 			$('<span> (' + option.min + ' - ' + option.max + ') </span> <label><input type="checkbox" />アニメ化</label>' ).insertAfter( input )
+			sliderInputs[sourceId] = input;
 		}
 		setSlider("opacity", {step: 0.01});
 		setSlider("top", {unit: 'px'});
@@ -240,7 +238,7 @@ $(function(){
 		function updaetView(name, value){
 			console.log(name + ' x:x '+ value + ' : ' + currentObject.css(name))
 			currentObject.css(name, value )
-			//window.App.instances.PropView.model.set(name, value);
+			App.instances.PropView.model.set(name, value);//modelへの変更
 		}
 		
 		// image setting
