@@ -96,19 +96,79 @@ $(function(){
 			
 		},
 		loadFrom :function(model){
-			for(var k in model.attributes){
-				console.log(k + " :" + model.get(k));
-			}
-				$("#left").val(-200).trigger('input');
-			
-			
+			//for(var k in model.attributes){
+			//	console.log(k + " :" + model.get(k));
+			//}
+			//$("#left").val(-200).trigger('input');
+
+			this.setSlider("opacity", {step: 0.01});
+			this.setSlider("top", {unit: 'px'});
+			this.setSlider("left", {unit: 'px'});
+			this.setSlider("width", {unit: 'px'});
+			this.setSlider("height", {unit: 'px'});
+			this.setSlider("transform_rotate", {unit: 'px'});
+			this.setSlider("transform_scaleX", {step: 0.1});
+			this.setSlider("transform_scaleY", {step: 0.1});
+			this.setSlider("border-radius", {unit: 'px'});
 		},
 		events : { //イベントハンドラのマッピング
 			"click a.more" : "moreInfo"
 		},
 		moreInfo : function(e){
 			 // Logic here
-		}
+		},
+		//render系関数
+		
+		setSlider : function(sourceId, option){
+			var input = $("#" + sourceId);
+			var option = option || {};
+			option.max = option.max || input.attr("max") || 100; //max:0 のときに100になっちゃうが、そんなパターンないだろー
+			option.min = option.min || input.attr("min") || 0;
+			option.val = option.val || this.model.get(sourceId) || input.val() || 0;
+			option.step = option.step || input.attr("step") || 1;
+			option.unit = option.unit || '';
+
+			if(!input.val()){
+				input.val(option.val)
+			}
+			
+			if(this.sliderInputs[sourceId]){
+				this.sliderInputs[sourceId].val(option.val.replace(option.unit, '')).trigger('input');
+				return;
+			}
+		
+			
+			
+			//スライダ生成
+			var slider = $( "<div class='prop_slider'></div>" ).insertAfter( input ).slider({
+				min: +option.min,
+				max: +option.max,
+				range: "min",
+				step : +option.step,
+				value : +option.val,
+				slide: function( event, ui ) {
+					input.val(ui.value)
+					updaetView(sourceId, ui.value+ option.unit);
+					
+				}
+			});
+			input.on('input', function() {
+				slider.slider( "value", $(this).val() );
+				updaetView(sourceId, $(this).val()+ option.unit);
+			});
+			input.attr("max", option.max);
+			input.attr("min", option.min);
+			$('<span> (' + option.min + ' - ' + option.max + ') </span> <label><input type="checkbox" />アニメ化</label>' ).insertAfter( input )
+			this.sliderInputs[sourceId] = input;
+			input.trigger('input')
+			
+			function updaetView(name, value){
+				console.log(name + ' x:x '+ value + ' : ' + currentObject.css(name))
+				currentObject.css(name, value )
+				App.instances.PropView.model.set(name, value);//modelへの変更
+			}
+		},
+		sliderInputs : {}
 	});
 	
 	
@@ -188,58 +248,7 @@ $(function(){
 	
 	//----------
 	// prop area
-	
-		var sliderInputs = {};
-		//スライダ初期化（生成）、イベントバインド
-		var setSlider = function(sourceId, option){
-			var input = $("#" + sourceId);
-			var option = option || {};
-			option.max = option.max || input.attr("max") || 100; //max:0 のときに100になっちゃうが、そんなパターンないだろー
-			option.min = option.min || input.attr("min") || 0;
-			option.val = option.val || input.val()       || 0;
-			option.step = option.step || input.attr("step") || 1;
-			option.unit = option.unit || '';
-			
-			if(!input.val()){
-				input.val(option.val)
-			}
-			
-			//スライダ生成
-			var slider = $( "<div class='prop_slider'></div>" ).insertAfter( input ).slider({
-				min: +option.min,
-				max: +option.max,
-				range: "min",
-				step : +option.step,
-				value : +option.val,
-				slide: function( event, ui ) {
-					input.val(ui.value)
-					updaetView(sourceId, ui.value+ option.unit);
-					
-				}
-			});
-			input.on('input', function() {
-				slider.slider( "value", $(this).val() );
-				updaetView(sourceId, $(this).val()+ option.unit);
-			});
-			input.attr("max", option.max);
-			input.attr("min", option.min);
-			$('<span> (' + option.min + ' - ' + option.max + ') </span> <label><input type="checkbox" />アニメ化</label>' ).insertAfter( input )
-			sliderInputs[sourceId] = input;
-		}
-		setSlider("opacity", {step: 0.01});
-		setSlider("top", {unit: 'px'});
-		setSlider("left", {unit: 'px'});
-		setSlider("width", {unit: 'px'});
-		setSlider("height", {unit: 'px'});
-		setSlider("transform_rotate", {unit: 'px'});
-		setSlider("transform_scaleX", {step: 0.1});
-		setSlider("transform_scaleY", {step: 0.1});
-		setSlider("border-radius", {unit: 'px'});
-		function updaetView(name, value){
-			console.log(name + ' x:x '+ value + ' : ' + currentObject.css(name))
-			currentObject.css(name, value )
-			App.instances.PropView.model.set(name, value);//modelへの変更
-		}
+
 		
 		// image setting
 		$("#image_url").on('input', function(){
