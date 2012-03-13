@@ -3,23 +3,23 @@
 
 $(function(){
 	//【TODO】window定義はあとでやめる
-	window.App ={Models:{}, Collections:{}, Views:{}, Routers:{} , instances:{}};//名前空間的な
+	window.App ={Models:{}, Collections:{}, Views:{}, Routers:{} , Instances:{}};//名前空間的な
 	
 	
 	
 	//----------------------------------------------------------------------------------
 	// *****  M o d e l  *****
 	App.Models.PropModel = Backbone.Model.extend({
+		//■オーバーライド関数 Overrides
 		initialize: function () {
-			//初期化時じゃないとセットできない値なんかを
-			this.set('name', 'object_' + this.cid);
 			
 			//初期化時にModelのイベントバインディングを行う。生成後でもいいんだけどね。自動ではやってくれないよ
 			//this.on('change', this.changeFunc)
-			this.on('error',  this.errorFunc)
+			this.on('error',  this.errorFunc);
 		},
 		defaults :{ //Modelのデフォルト値を設定します
-			frame : 0
+			frame : 0,
+			color : '#ffffff'
 		},
 		destroy : {//破棄時のイベント。勝手にバインディングをされるよ。
 			
@@ -30,6 +30,7 @@ $(function(){
 				return "おい！透明度がマイナスってお前！";
 			}
 		},
+		//■自分で定義した関数 Custom function
 		//-----------
 		//自分でイベントバインディングをしてあげないとダメなメソッドさんたち
 		changeFunc : function(model){
@@ -46,6 +47,38 @@ $(function(){
 		}
 	});
 	
+	
+
+	App.Models.TimelineModel = Backbone.Model.extend({
+		//■オーバーライド関数 Overrides
+		initialize: function (timeline) {
+			for(var k in timeline){
+				timeline[k];
+				_.each(timeline[k], function(a){
+				//	console.log(a);//要素ひとつを処理
+				});
+			}
+		},
+		destroy : {//破棄時のイベント。勝手にバインディングをされるよ。
+			
+		},
+		validate : function(attr){//validateメソッドを作ると、値の入力を拒否できるよ。これは勝手にバインディングされるよ。
+			//気にくわないときは文字列をreturnするといいよ。errorイベントが発火されるよ
+			if(!!attr && attr.alpha < 0){
+				return "おい！透明度がマイナスってお前！";
+			}
+		},
+		addFunc: function(model){
+			console.log(model)
+		},
+		removeFunc: function(model){
+			console.log(model)
+		}
+	});
+	
+	
+	//----------------------------------------------------------------------------------
+	// *****  C o l l e c t i o n  *****
 	
 	
 	//----------------------------------------------------------------------------------
@@ -65,25 +98,26 @@ $(function(){
 	*/
 	
 	App.Views.PropView = Backbone.View.extend({
+		//■オーバーライド関数 Overrides
 		el : $('#prop_detail'),
 		//model : new App.Models.PropModel, //【追記】今回のように、viewとmodelを入れ替えるならここに有るべきじゃないと思う
-		initialize : function(){
-			this.model && this.setModel(this.model);
+		initialize : function(model){
+			model && this.setModel(model);
 		},
 		/** Viewに関連付けられているModelを変更する */
 		setModel: function(model){
 			this.model && this.model.off("change", this.render, this);//古いModelから削除
-			
+			console.log(model)
 			this.model = model;//新しいModel適用
 			this.model.on("change", this.render, this);//modelが変更された時に、renderイベントを走らせる。第3引数"this"を与えることで、this.render内でのthis参照が可能
 			this.loadFrom(this.model);
 		},
 		/** 描画 */
 		render : function(){
-			console.log("レンダー！！");
+			//console.log("レンダー！！");
 			
 			var data = this.model.toJSON();//モデル取得
-			console.log(JSON.stringify(data))
+			//console.log(JSON.stringify(data))
 			//var html = this.template(data[0]);//テンプレート適用
 			//console.log($(this.el)	)
 			//$(this.el).html(html); // 上書き
@@ -95,21 +129,22 @@ $(function(){
 			//$(this.el).html(compiledTemplate(this.model.toJSON()));
 			
 		},
+		//-----------
+		//■自分で定義した関数 Custom function
 		loadFrom :function(model){
-			//for(var k in model.attributes){
-			//	console.log(k + " :" + model.get(k));
-			//}
-			//$("#left").val(-200).trigger('input');
-
+			//text系
+			$('#kf_object_name').val(this.model.get(('kf_object_name')))
+			$('#color').val(this.model.get(('color')))
+			
+			
+			//slider系
 			this.setSlider("opacity", {step: 0.01});
 			this.setSlider("top", {unit: 'px'});
 			this.setSlider("left", {unit: 'px'});
 			this.setSlider("width", {unit: 'px'});
 			this.setSlider("height", {unit: 'px'});
 			this.setSlider("transform_rotate", {unit: 'px'});
-			this.setSlider("transform_scaleX", {step: 0.1});
-			this.setSlider("transform_scaleY", {step: 0.1});
-			this.setSlider("border-radius", {unit: 'px'});
+			this.setSlider("border_radius", {unit: 'px'});
 		},
 		events : { //イベントハンドラのマッピング
 			"click a.more" : "moreInfo"
@@ -127,17 +162,25 @@ $(function(){
 			option.val = option.val || this.model.get(sourceId) || input.val() || 0;
 			option.step = option.step || input.attr("step") || 1;
 			option.unit = option.unit || '';
-
+			
+			option.val = (option.val + '').replace(option.unit, '')
+			
 			if(!input.val()){
 				input.val(option.val)
 			}
 			
 			if(this.sliderInputs[sourceId]){
-				this.sliderInputs[sourceId].val(option.val.replace(option.unit, '')).trigger('input');
+				this.sliderInputs[sourceId].val(option.val).trigger('input');
 				return;
 			}
 		
 			
+			var updaetView = _.bind(function(name, value){
+				//console.log(name + ' x:x '+ value + ' : ' + currentObject.css(name))
+				currentObject.css(name.replace('_','-'), value )
+				this.model.set(name, value);//modelへの変更
+				window.currentStyle[name] = value;
+			},this);
 			
 			//スライダ生成
 			var slider = $( "<div class='prop_slider'></div>" ).insertAfter( input ).slider({
@@ -160,41 +203,115 @@ $(function(){
 			input.attr("min", option.min);
 			$('<span> (' + option.min + ' - ' + option.max + ') </span> <label><input type="checkbox" />アニメ化</label>' ).insertAfter( input )
 			this.sliderInputs[sourceId] = input;
-			input.trigger('input')
+			input.val(option.val.replace(option.unit, '')).trigger('input');
 			
-			function updaetView(name, value){
-				console.log(name + ' x:x '+ value + ' : ' + currentObject.css(name))
-				currentObject.css(name, value )
-				App.instances.PropView.model.set(name, value);//modelへの変更
-			}
+			
 		},
 		sliderInputs : {}
 	});
 	
 	
 	
+	var tl = {
+					obj1 : {
+						 0 : {width:'100px', height:'100px', backgroundColor:"#522F7F", left:'10px', top:'10px'},
+						10 : {opacity : 0}
+					},
+					obj2 : {
+						10 : {width:'100px', height:'100px', backgroundColor:"#522F7F", left:'10px', top:'10px'},
+						20 : {opacity : 0}
+					}
+				};
+	App.Views.TimelineView = Backbone.View.extend({
+		//■オーバーライド関数 Overrides
+		initialize : function(){
+			this.model.on("change", this.render, this);
+			
+			
+		},
+		model : new App.Models.TimelineModel(tl),
+		//■自分で定義した関数 Custom function
+		//---------
+		//自分でイベントバインディングをしてあげないとダメなメソッドさんたち
+		render : function(){
+			console.log('タイムラインレンダー')
+			//テーブル構築
+			var data = this.model.toJSON();
+			var tbl = $('#timeline_table').show().empty().append('<thead>').append('<tbody>');
+			
+			//初期化
+			var thead = $('<tr>').appendTo(tbl.find('thead')).append('<th>オブジェクト名＼フレーム数</th>');
+			var tbodys = {};
+			for(var key in data){
+				tbodys[key] = $('<tr>').appendTo(tbl.find('tbody')).append('<td>' + key + '</td>')
+			}
+			//create table
+			for(var i=0; i< 120; i++){
+				if(i %5 == 0) thead.append('<th colspan="5">' + i + '</th>')
+				for(var key in data){
+					var obj = data[key][i];
+					if(obj){
+						tbodys[key].append('<td>　' + '</td>')
+					}else{
+						tbodys[key].append('<td>　</td>')
+					}
+				}
+			}
+			//タイムライン表示化
+			$('#timeline').empty();
+			tbl.clone().show().appendTo('#timeline').fixedTable({
+				width: 960,
+				height: 135,
+				fixedColumns: 1,
+				classHeader: "fixedHead",// header style
+				classFooter: "fixedFoot",// footer style
+				classColumn: "fixedColumn",// fixed column on the left  
+				fixedColumnWidth: 160,// the width of fixed column on the left   
+				outerId: 'timeline',// table's parent div's id 
+				Contentbackcolor: "white",// tds' in content area default background color  
+				fixedColumnbackcolor:"#187BAF", // tds' in fixed column default background color  
+			});
+			$('.fixedContainer table').css('table-layout','fixed');
+			
+			
+			//タイムラインクリックイベント ---------------------------------------------
+			$('#timeline_table td').on('click',function(){
+				//色変え
+				var tr = $(this).parent();
+				var trIdx = tr.parent().children().index(tr);
+				var objId = $(".fixedColumn .fixedTable tr").eq(trIdx).text();
+				var frame = tr.children().index(this);
+				console.log(objId + ' : ' + frame);
+				//オブジェクト色つけ
+				var hasProp = $(this).attr('hasprop');
+				$(this).css('backgroundColor', hasProp?'white':'red').attr('hasprop', !hasProp?'true':'');
+				
+				//currentObj変更（操作対象変更）
+				window.currentObject = $("#" + objId);
+				
+				//データ合成
+				var anims = data[objId];
+				
+				window.compositStyle = {};
+				_.each(_.keys(anims), function(keyFrame){
+					if(keyFrame <= +frame){
+						for(var k in anims[keyFrame]){
+							window.compositStyle[k] = anims[keyFrame][k] || window.compositStyle[k];
+						}
+					}else return false;
+				});
+				
+				
+				//PropViewのmodel変更（値適用）, render呼び出し
+				App.Instances.PropView.setModel(new App.Models.PropModel(window.compositStyle));
+				window.currentStyle = anims[frame] || {};
+			})
+		},
+	});
 	
 	
 	//----------------------------------------------------------------------------------
-	// *****  C o l l e c t i o n  *****
-	
-	App.Collections.PropCollection = Backbone.Collection.extend({
-		//model : App.Models.PropModel, //なくてもOKらしい【追記】これちがくねぇ！？ mode: new App.Models~~~ なので、インスタンス化しなきゃダメ????
-		initialize : function(){
-			this.on("add",    this.addFunc); //コレクション追加時のイベント
-			this.on("remove", this.removeFunc); //コレクション削除時のイベント
-		},
-		//---------
-		//自分でイベントバインディングをしてあげないとダメなメソッドさんたち
-		addFunc: function(model){
-			console.log(model)
-		},
-		removeFunc: function(model){
-			console.log(model)
-		}
-		
-	});
-	
+	// *****  R o u t e r  *****
 	
 	//---------------------------------------------------------------------------------
 	//Routerを定義します
@@ -242,8 +359,13 @@ $(function(){
 	Backbone.history.start();
 	
 	
-	App.instances.PropView = new App.Views.PropView();
+	//----------------------------------------------------------------------------------
+	// *****  I n s t a n c e  *****
+	//インスタンス化
+	var model = new App.Models.PropModel({"frame":0,"name":"object_c1","opacity":"0.92","top":"47px","left":"76px","width":"122px","height":"157px","transform_rotate":"0px","transform_scaleX":"1","transform_scaleY":"1","border_radius":"1px"})
 	
+	App.Instances.PropView     = new App.Views.PropView(model);
+	App.Instances.TimelineView = new App.Views.TimelineView();
 	
 	
 	//----------
@@ -255,11 +377,11 @@ $(function(){
 			currentObject.css('backgroundImage', 'url(' + $(this).val() +')')
 		})
 		// color setting
-		var colorInput = $('#colorSelector');
+		var colorInput = $('#color');
 		colorInput.ColorPicker({
 			color: colorInput.val() || '#0000ff',
 			onChange: function (hsb, hex, rgb) {
-				$("#colorSelector").val('#' + hex);
+				$("#color").val('#' + hex);
 				currentObject.css('backgroundColor', '#' + hex);
 			},
 			onShow : function(colpkr){
@@ -282,89 +404,4 @@ $(function(){
 	// Render系の処理
 	
 	
-})
-
-
-$(function(){
-				//テーブル構築
-				 $('timeline_table').show()
-				var tbl = $('#timeline_table').empty();
-				tbl.append('<thead>').append('<tbody>');
-				
-				var test = {
-					obj1 : {
-						 0 : {opacity : 1},
-						10 : {opacity : 0}
-					},
-					obj2 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj3 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj4 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj5 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj6 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj7 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj8 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj9 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					}
-				}
-				//初期化
-				var thead = $('<tr>').appendTo(tbl.find('thead')).append('<th>オブジェクト名＼フレーム数</th>');
-				var tbodys = {};
-				for(var key in test){
-					tbodys[key] = $('<tr>').appendTo(tbl.find('tbody')).append('<td>' + key + '</td>')
-				}
-				//create table
-				for(var i=0; i< 120; i++){
-					if(i %5 == 0) thead.append('<th colspan="5">' + i + '</th>')
-					for(var key in test){
-						var obj = test[key][i];
-						if(obj){
-							tbodys[key].append('<td>　' + '</td>')
-						}else{
-							tbodys[key].append('<td>　</td>')
-						}
-					}
-				}
-				
-				
-				//タイムライン表示化
-				$('#timeline').empty();
-				tbl.clone().show().appendTo('#timeline').fixedTable({
-		            width: 960,
-		            height: 135,
-		            fixedColumns: 1,
-		            classHeader: "fixedHead",// header style
-		            classFooter: "fixedFoot",// footer style
-		            classColumn: "fixedColumn",// fixed column on the left  
-		            fixedColumnWidth: 160,// the width of fixed column on the left   
-		            outerId: 'timeline',// table's parent div's id 
-		            Contentbackcolor: "#FFFFFF",// tds' in content area default background color  
-		            Contenthovercolor: "#99CCFF", // tds' in content area background color while hover. 
-		            fixedColumnbackcolor:"#187BAF", // tds' in fixed column default background color  
-		            fixedColumnhovercolor:"#99CCFF" // tds' in fixed column background color while hover.  
-		        });
-		        $('.fixedContainer table').css('table-layout','fixed')
-
 })

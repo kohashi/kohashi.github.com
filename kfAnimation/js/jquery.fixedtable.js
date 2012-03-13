@@ -298,63 +298,74 @@ $(document).ready(function() {
                 // }
             // });
         // }
-
+		$("#" + Id + " ." + options.classColumn + " .fixedTable table tr").each(function(i) {
+			$(this).children("td").css({
+				"background-color": fixedColumnbackcolor
+			});
+			var obj = $("#" + Id + " .fixedContainer .fixedTable table tr").eq(i);
+			obj.children("td").css({
+				"background-color": backcolor
+			});
+			obj.children("td").children("pre").css({
+				"background-color": backcolor
+			});
+		});
         // mouse in/out fixedColumn's fixedtable, change background color.
-        $("#" + Id + " ." + options.classColumn + " .fixedTable table tr").each(function(i) {
-            $(this).mouseover(function() {
-                $(this).children("td").css({
-                    "background-color": fixedColumnhovercolor
-                });
-                var obj = $("#" + Id + " .fixedContainer .fixedTable table tr").eq(i);
-                obj.children("td").css({
-                    "background-color": hovercolor
-                });
-                obj.children("td").children("pre").css({
-                    "background-color": hovercolor
-                });
-            });
-            $(this).mouseout(function() {
-                $(this).children("td").css({
-                    "background-color": fixedColumnbackcolor
-                });
-                var obj = $("#" + Id + " .fixedContainer .fixedTable table tr").eq(i);
-                obj.children("td").css({
-                    "background-color": backcolor
-                });
-                obj.children("td").children("pre").css({
-                    "background-color": backcolor
-                });
-            });
-        });
-
-        // mouse in/out fixedContainer's fixedtable, change background color.
-        $("#" + Id + " .fixedContainer .fixedTable table tr").each(function(i) {
-            $(this).mouseover(function() {
-                $(this).children("td").css({
-                    "background-color": hovercolor
-                });
-                $(this).children("td").children("pre").css({
-                    "background-color": hovercolor
-                });
-                var obj = $("#" + Id + " ." + options.classColumn + " .fixedTable table tr").eq(i);
-                obj.children("td").css({
-                    "background-color": fixedColumnhovercolor
-                });
-
-            });
-            $(this).mouseout(function() {
-                $(this).children("td").css({
-                    "background-color": backcolor
-                });
-                $(this).children("td").children("pre").css({
-                    "background-color": backcolor
-                });
-                var obj = $("#" + Id + " ." + options.classColumn + " .fixedTable table tr").eq(i);
-                obj.children("td").css({
-                    "background-color": fixedColumnbackcolor
-                });
-            });
-        });
+        //$("#" + Id + " ." + options.classColumn + " .fixedTable table tr").each(function(i) {
+        //    $(this).mouseover(function() {
+        //        $(this).children("td").css({
+        //            "background-color": fixedColumnhovercolor
+        //        });
+        //        var obj = $("#" + Id + " .fixedContainer .fixedTable table tr").eq(i);
+        //        obj.children("td").css({
+        //            "background-color": hovercolor
+        //        });
+        //        obj.children("td").children("pre").css({
+        //            "background-color": hovercolor
+        //        });
+        //    });
+        //    $(this).mouseout(function() {
+        //        $(this).children("td").css({
+        //            "background-color": fixedColumnbackcolor
+        //        });
+        //        var obj = $("#" + Id + " .fixedContainer .fixedTable table tr").eq(i);
+        //        obj.children("td").css({
+        //            "background-color": backcolor
+        //        });
+        //        obj.children("td").children("pre").css({
+        //            "background-color": backcolor
+        //        });
+        //    });
+        //});
+        //
+        //// mouse in/out fixedContainer's fixedtable, change background color.
+        //$("#" + Id + " .fixedContainer .fixedTable table tr").each(function(i) {
+        //    $(this).mouseover(function() {
+        //        $(this).children("td").css({
+        //            "background-color": hovercolor
+        //        });
+        //        $(this).children("td").children("pre").css({
+        //            "background-color": hovercolor
+        //        });
+        //        var obj = $("#" + Id + " ." + options.classColumn + " .fixedTable table tr").eq(i);
+        //        obj.children("td").css({
+        //            "background-color": fixedColumnhovercolor
+        //        });
+        //
+        //    });
+        //    $(this).mouseout(function() {
+        //        $(this).children("td").css({
+        //            "background-color": backcolor
+        //        });
+        //        $(this).children("td").children("pre").css({
+        //            "background-color": backcolor
+        //        });
+        //        var obj = $("#" + Id + " ." + options.classColumn + " .fixedTable table tr").eq(i);
+        //        obj.children("td").css({
+        //            "background-color": fixedColumnbackcolor
+        //        });
+        //    });
+        //});
 
         var contenttbH = $("#" + Id + " .fixedContainer .fixedTable table").height();
         if (contenttbH < maintbheight) {
@@ -372,14 +383,6 @@ $(document).ready(function() {
             });
         }
         
-        $('td').on('click',function(){
-        	var tr = $(this).parent();
-        	var trIdx = tr.parent().children().index(tr);
-        	var obj = $(".fixedColumn .fixedTable tr").eq(trIdx).text();
-        	var frame = tr.children().index(this);
-        	//var obj = 
-        	console.log(obj + ' : ' + frame)
-        })
     }
 
 })(jQuery);

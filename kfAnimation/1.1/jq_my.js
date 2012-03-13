@@ -1,5 +1,8 @@
 	$(function() {
-		window.currentObject = $("#box1")
+		window.currentObject = $("#box1");
+		window.currentFrame  = 0;
+		window.currentStyle  = {};
+		window.compositStyle  = {};
 		
 		// tab view ----------------
 		var $tab_title_input = $( "#tab_title")
@@ -128,7 +131,7 @@
 			.button()
 			.click(function(){
 					$( "#dialog:ui-dialog" ).dialog( "destroy" );
-					$( "#dialog-message" ).dialog( "open" );
+					$( "#dialog_message" ).dialog( "open" );
 			});	
 		$('#clear_img')
 			.button()
@@ -137,7 +140,21 @@
 			});	
 			
 		$('#add_object')
-			.button();
+			.button()
+			.click(function(){
+				//$("#new_object_dialog").dialog( "open" ); //jQ-Prompt
+				var newObjName = prompt("オブジェクト名入れてください(絶対に重複名入れないでください)");
+				if(newObjName){
+					//何かに追加
+					//再描画
+					var initState = {width:'100px', height:'100px', backgroundColor:"#522F7F", left:'10px', top:'10px',
+						opacity:1, transform_rotate:0, transform_scaleX:0, transform_scaleY:0, border_radius:'0px'};
+					var d = $('<div id="'+newObjName+'"/>').appendTo($("#demo_stage"))
+						.text('#'+newObjName)
+						.css(initState);
+					App.Instances.TimelineView.model.set(newObjName, {0:initState })
+				}
+			});
 			
 		$('#delete_object')
 			.button();
@@ -176,7 +193,21 @@
 			}
 			$tabs.tabs( "option", "selected", savedata.idx);
 		}
-		$( "#dialog-message" ).dialog({
+		$( "#dialog_message" ).dialog({
+			autoOpen: false,
+			modal: true,
+			buttons: {
+				Ok: function(){
+					delete localStorage['savedata'];
+					location.href = location.href;
+					$( this ).dialog( "close" );
+				},
+				cancel:function(){
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+		$( "#new_object_dialog" ).dialog({
 			autoOpen: false,
 			modal: true,
 			buttons: {
