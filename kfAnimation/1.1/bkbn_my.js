@@ -162,6 +162,11 @@ $(function(){
 			$('<div id="'+newObjName+'"/>').appendTo($("#demo_stage"))
 						.text('#'+newObjName)
 						.css(this.model.get(newObjName)[frame]);
+		},
+		removeObject:function(objName){
+			this.model.unset(objName);
+			$('#'+objName).remove();
+			this.render();
 		}
 	});
 	

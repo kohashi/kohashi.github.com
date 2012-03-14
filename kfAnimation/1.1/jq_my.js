@@ -160,7 +160,10 @@
 			});
 			
 		$('#delete_object')
-			.button();
+			.button()
+			.click(function(){
+					App.Instances.TimelineView.removeObject(window.currentObject.attr('id'));
+			});
 		//------------------------------------
 		
 		//textarea configiration
