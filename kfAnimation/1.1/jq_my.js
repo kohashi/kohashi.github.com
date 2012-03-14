@@ -1,5 +1,5 @@
 	$(function() {
-		window.currentObject = $("#box1");
+		window.currentObject = null;
 		window.currentFrame  = 0;
 		window.currentStyle  = {};
 		window.compositStyle  = {};
@@ -69,8 +69,7 @@
 		}
 		
 		function reset_box(){
-			  $('.demo_box').css({
-				position: 'absolute',
+			 window.currentObject.css({
 					top:'100px', left:'15px',
 					width:'150px', height:'150px',
 					'-webkit-border-radius':'5px',
@@ -83,9 +82,7 @@
 					cursor: 'default',
 					opacity: 1
 				});
-				$('#box2').css({'left': '460px', background:'#965849'});
 			}
-		reset_box();
 
 		//--------------------------------
 		// close icon: removing the tab on click
