@@ -299,9 +299,9 @@ $(document).ready(function() {
             // });
         // }
 		$("#" + Id + " ." + options.classColumn + " .fixedTable table tr").each(function(i) {
-			$(this).children("td").css({
-				"background-color": fixedColumnbackcolor
-			});
+			//$(this).children("td").css({
+			//	"background-color": fixedColumnbackcolor
+			//});
 			var obj = $("#" + Id + " .fixedContainer .fixedTable table tr").eq(i);
 			obj.children("td").css({
 				"background-color": backcolor

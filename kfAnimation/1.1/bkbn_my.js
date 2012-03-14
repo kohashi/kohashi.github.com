@@ -5,18 +5,21 @@ $(function(){
 	//【TODO】window定義はあとでやめる
 	window.App ={Models:{}, Collections:{}, Views:{}, Routers:{} , Instances:{}, Data:{}};//名前空間的な
 	
+	App.Data.initState = {width:'100px', height:'100px', backgroundColor:"#522F7F", left:'10px', top:'10px',
+						opacity:1, transform_rotate:0, transform_scaleX:0, transform_scaleY:0, border_radius:'0px'};
 	
+	//本当は読み込み時に初期化される、はず。
 	App.Data.timeline = {
 					obj1 : {
-						 0 : {width:'100px', height:'100px', backgroundColor:"#522F7F", left:'10px', top:'10px'},
+						 0 : App.Data.initState,
 						10 : {opacity : 0}
 					},
 					obj2 : {
-						10 : {width:'100px', height:'100px', backgroundColor:"#522F7F", left:'10px', top:'10px'},
-						20 : {opacity : 0}
+						0 : App.Data.initState,
+						20 : {opacity : 0},
+						30 : {opacity : 1}
 					}
 				};
-	
 	
 	//----------------------------------------------------------------------------------
 	// *****  M o d e l  *****
@@ -42,16 +45,14 @@ $(function(){
 		},
 		//■自分で定義した関数 Custom function -----------
 		changeFunc : function(model){
-			//値の更新処理を書く？
-			//console.log(model);
+			//タイムラインのmodelへの更新処理
+			var objName = window.currentObject.attr("id");
+			var tmp = App.Instances.TimelineView.model.get(objName)
+			tmp[window.currentFrame] = model.toJSON();
+			App.Instances.TimelineView.model.set(objName, tmp);
 		},
 		errorFunc : function(model, errMsg){
 			//console.log(errMsg);
-		},
-		//-----------
-		url : './jquery.kfAnimation.1.1.js', // model.fetch()メソッドを実行すると、このURLにアクセスするよ。XMLHttpRequestでだよ。ドメイン境界の問題はあるよ
-		parse: function(data) { // model.fetch()メソッドを実行した結果が、帰ってきます。
-			console.log(data);
 		}
 	});
 	
@@ -60,19 +61,18 @@ $(function(){
 	App.Models.TimelineModel = Backbone.Model.extend({
 		//■オーバーライド関数 Overrides
 		initialize: function (timeline) {
-			for(var k in timeline){
-				timeline[k];
-				for(var t in timeline[k]){
-					console.log(k + ' : ' + t * ' : ' + timeline[k][t]);//本当はテーブルの色を変える処理、か？
-				}
-			}
+			//for(var k in timeline){
+			//	timeline[k];
+			//	for(var t in timeline[k]){
+			//		console.log(k + ' : ' + t * ' : ' + timeline[k][t]);//本当はテーブルの色を変える処理、か？
+			//	}
+			//}
+			this.on('change', this.changeFunc)
+			this.on('add', this.changeFunc)
 		},
 		//■自分で定義した関数 Custom function -----------
-		addFunc: function(model){
-			console.log(model)
-		},
-		removeFunc: function(model){
-			console.log(model)
+		changeFunc: function(model){
+			//永続化処理とか
 		}
 	});
 	
@@ -84,18 +84,6 @@ $(function(){
 	//----------------------------------------------------------------------------------
 	// *****  V i e w  *****
 	
-	//Viewメモ：
-	/*
-	// 以下は'UL.team-element'を生成する
-	App.Views.Teams = Backbone.View.extend({
-		el : 'UL.team-list'
-	});
-	// 以下は 'div.team-element'を生成する
-	App.Views.Team = Backbone.View.extend({
-		className : '.team-element',
-		tagName : 'div'
-	});
-	*/
 	
 	App.Views.PropView = Backbone.View.extend({
 		//■オーバーライド関数 Overrides
@@ -108,7 +96,6 @@ $(function(){
 		/** Viewに関連付けられているModelを変更する */
 		setModel: function(model){
 			this.model && this.model.off("change", this.render, this);//古いModelから削除
-			console.log(model)
 			this.model = model;//新しいModel適用
 			this.model.on("change", this.render, this);//modelが変更された時に、renderイベントを走らせる。第3引数"this"を与えることで、this.render内でのthis参照が可能
 			this.loadFrom(this.model);
@@ -133,8 +120,8 @@ $(function(){
 		//■自分で定義した関数 Custom function -----------
 		loadFrom :function(model){
 			//text系
-			$('#kf_object_name').val(this.model.get(('kf_object_name')))
-			$('#color').val(this.model.get(('color')))
+			$('#kf_object_name').val(this.model.get(('kf_object_name')));
+			$('#color').val(this.model.get(('color')));
 			
 			//slider系
 			var __setSlider = _.bind(setSlider, this);
@@ -154,18 +141,28 @@ $(function(){
 		//■オーバーライド関数 Overrides
 		initialize : function(){
 			this.model.on("change", this.render, this);
-			
-			
+			this.render();
+			for(var objName in this.model.attributes){
+				this.renderNewObject(objName, 0);
+			}
 		},
 		model : new App.Models.TimelineModel(App.Data.timeline),
 		//■自分で定義した関数 Custom function -----------
 		render : function(){
-			console.log('タイムラインレンダー')
 			//テーブル構築
 			var data = this.model.toJSON();
-			
 			buildTimelineTable(data);
 		},
+		addObject: function(newObjName){
+			this.model.set(newObjName, {0: App.Data.initState });
+			this.renderNewObject(newObjName, 0);
+		},
+		renderNewObject: function(newObjName, frame){
+			var frame = frame || 0;
+			$('<div id="'+newObjName+'"/>').appendTo($("#demo_stage"))
+						.text('#'+newObjName)
+						.css(this.model.get(newObjName)[frame]);
+		}
 	});
 	
 	
@@ -274,6 +271,8 @@ $(function(){
 			
 			
 		}
+	
+	//■タイムライン表示再構築 -------------------------------------------------------------------
 	function buildTimelineTable(data){
 		var tbl = $('#timeline_table').show().empty().append('<thead>').append('<tbody>');
 		
@@ -307,44 +306,68 @@ $(function(){
 			fixedColumnWidth: 160,// the width of fixed column on the left   
 			outerId: 'timeline',// table's parent div's id 
 			Contentbackcolor: "white",// tds' in content area default background color  
-			fixedColumnbackcolor:"#187BAF", // tds' in fixed column default background color  
+			//fixedColumnbackcolor:"#187BAF", // tds' in fixed column default background color  
 		});
 		$('.fixedContainer table').css('table-layout','fixed');
+		
+		//キーフレーム適用セル色付け
+		var setKeyframeColors = function(){
+			$(".fixedColumn .fixedTable tr").each(function(idx){
+				var objId = $(this).text();
+				var targetTR = $('#timeline_table tr').eq(idx); //操作対象のTR
+				
+				var f = data[objId];
+				console.log(f);
+				console.log(targetTR)
+				
+				targetTR.children().each(function(i){
+					$(this).css('background', f[i] ? 'red': 'white');//キーフレームアリなしで色分け
+				})
+			})
+		};
+		setKeyframeColors();
 		
 		
 		//タイムラインクリックイベント ---------------------------------------------
 		$('#timeline_table td').on('click',function(){
-			var tr = $(this).parent();
-			var trIdx = tr.parent().children().index(tr);
+			var clickTr = $(this).parent();
+			var trIdx = clickTr.parent().children().index(clickTr);
 			var objId = $(".fixedColumn .fixedTable tr").eq(trIdx).text();
-			var frame = tr.children().index(this);
+			var frame = clickTr.children().index(this);
 			var anims = data[objId];
 			
-			console.log(objId + ' : ' + frame);
+			window.currentFrame = frame;
 			
-			window.currentStyle = anims[frame] || {};
+			console.log(objId + ' : ' + frame + ' ###################');
+			console.log(data)
 			
-			//オブジェクト色つけ
-			var hasProp = anims[frame];
-			$(this).css('backgroundColor', hasProp?'white':'red').attr('hasprop', !hasProp?'true':'');
+			window.currentStyle = anims[frame] || {};//多分これ使わねぇなー…
+			
+			//色付け
+			setKeyframeColors();
+			
+			//選択中セル色つけ
+			$(this).css('backgroundColor', 'palegreen');
+			
+			//選択中セルのオブジェクトタイトル色付け
+			$(".fixedColumn .fixedTable tr").each(function(){
+				$(this).css('backgroundColor', $(this).text() == objId? '#palegreen':'');
+			})
+			
 			
 			//currentObj変更（操作対象変更）
 			window.currentObject = $("#" + objId);
 			
-			//データ合成
-			
-			console.log(111)
-			
+			//データ合成: クリックしたフレームにおけるスタイルを生成
 			window.compositStyle = {};
 			_.each(_.keys(anims), function(keyFrame){
 				if(keyFrame <= +frame){
 					for(var k in anims[keyFrame]){
 						window.compositStyle[k] = anims[keyFrame][k] || window.compositStyle[k];
 					}
-					console.log(anims[keyFrame])
 				}else return false;
 			});
-			console.log(222)
+			window.compositStyle.frame = +frame;
 			
 			
 			//PropViewのmodel変更（値適用）, render呼び出し

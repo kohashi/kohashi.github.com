@@ -143,13 +143,7 @@
 				var newObjName = prompt("オブジェクト名入れてください(絶対に重複名入れないでください)");
 				if(newObjName){
 					//何かに追加
-					//再描画
-					var initState = {width:'100px', height:'100px', backgroundColor:"#522F7F", left:'10px', top:'10px',
-						opacity:1, transform_rotate:0, transform_scaleX:0, transform_scaleY:0, border_radius:'0px'};
-					var d = $('<div id="'+newObjName+'"/>').appendTo($("#demo_stage"))
-						.text('#'+newObjName)
-						.css(initState);
-					App.Instances.TimelineView.model.set(newObjName, {0:initState })
+					App.Instances.TimelineView.addObject(newObjName);
 				}
 			});
 			
