@@ -12,12 +12,12 @@ $(function(){
 	App.Data.timeline = {
 					obj1 : {
 						 0 : App.Data.initState,
-						10 : {opacity : 0}
+						10 : {opacity : 1, left:'180px'}
 					},
 					obj2 : {
 						0 : App.Data.initState,
 						20 : {opacity : 0},
-						30 : {opacity : 1}
+						30 : {opacity : 1, top:'150px'}
 					}
 				};
 	

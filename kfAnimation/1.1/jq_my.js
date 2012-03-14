@@ -110,6 +110,18 @@
 				var selectedId = $tabs.tabs('option', 'selected') ;
 				var targetId = $("#tabs_list").children().eq(selectedId).find("a").attr("href");
 				try {
+					var timelineData = window.App.Instances.TimelineView.model.toJSON();
+					console.log(timelineData);
+					var kfData = '';
+					for(objName in timelineData){
+						kfData += '$("#' + objName + '").keyframe('
+						+ JSON.stringify(timelineData[objName])
+						+ ');'
+					}
+					console.log(kfData);
+					
+					$(targetId).find('textarea').val(kfData);
+					
 					eval($(targetId).find('textarea').val());
 				} catch(e) {
 					alert('It was a problem with your code!');
