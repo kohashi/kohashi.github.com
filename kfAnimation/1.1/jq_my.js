@@ -1,12 +1,8 @@
 	$(function() {
-		window.currentObject = $("#box1")
-		window.functionChain = [];
-		window.callChain = function(obj){
-			for(var i=0; i<functionChain.length; i++){
-				functionChain[i].apply(obj, _.rest(arguments));
-			}
-		}
-		
+		window.currentObject = null;
+		window.currentFrame  = 0;
+		window.currentStyle  = {};
+		window.compositStyle  = {};
 		
 		// tab view ----------------
 		var $tab_title_input = $( "#tab_title")
@@ -73,8 +69,7 @@
 		}
 		
 		function reset_box(){
-			  $('.demo_box').css({
-				position: 'absolute',
+			 window.currentObject.css({
 					top:'100px', left:'15px',
 					width:'150px', height:'150px',
 					'-webkit-border-radius':'5px',
@@ -87,9 +82,7 @@
 					cursor: 'default',
 					opacity: 1
 				});
-				$('#box2').css({'left': '460px', background:'#965849'});
 			}
-		reset_box();
 
 		//--------------------------------
 		// close icon: removing the tab on click
@@ -117,6 +110,18 @@
 				var selectedId = $tabs.tabs('option', 'selected') ;
 				var targetId = $("#tabs_list").children().eq(selectedId).find("a").attr("href");
 				try {
+					var timelineData = window.App.Instances.TimelineView.model.toJSON();
+					console.log(timelineData);
+					var kfData = '';
+					for(objName in timelineData){
+						kfData += '$("#' + objName + '").keyframe('
+						+ JSON.stringify(timelineData[objName])
+						+ ');\r\n\r\n'
+					}
+					console.log(kfData);
+					
+					$(targetId).find('textarea').val(kfData);
+					
 					eval($(targetId).find('textarea').val());
 				} catch(e) {
 					alert('It was a problem with your code!');
@@ -135,97 +140,30 @@
 			.button()
 			.click(function(){
 					$( "#dialog:ui-dialog" ).dialog( "destroy" );
-					$( "#dialog-message" ).dialog( "open" );
+					$( "#dialog_message" ).dialog( "open" );
 			});	
 		$('#clear_img')
 			.button()
 			.click(function(){
 					currentObject.css('backgroundImage', 'none')
 			});	
-		$('#relaod_tl')
+			
+		$('#add_object')
 			.button()
 			.click(function(){
-				//テーブル構築
-				 $('timeline_table').show()
-				var tbl = $('#timeline_table').empty();
-				tbl.append('<thead>').append('<tbody>');
-				
-				var test = {
-					obj1 : {
-						 0 : {opacity : 1},
-						10 : {opacity : 0}
-					},
-					obj2 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj3 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj4 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj5 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj6 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj7 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj8 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					},
-					obj9 : {
-						10 : {opacity : 1},
-						20 : {opacity : 0}
-					}
+				//$("#new_object_dialog").dialog( "open" ); //jQ-Prompt
+				var newObjName = prompt("オブジェクト名入れてください(絶対に重複名入れないでください)");
+				if(newObjName){
+					//何かに追加
+					App.Instances.TimelineView.addObject(newObjName);
 				}
-				//初期化
-				var thead = $('<tr>').appendTo(tbl.find('thead')).append('<th>オブジェクト名＼フレーム数</th>');
-				var tbodys = {};
-				for(var key in test){
-					tbodys[key] = $('<tr>').appendTo(tbl.find('tbody')).append('<td>' + key + '</td>')
-				}
-				//create table
-				for(var i=0; i< 120; i++){
-					if(i %5 == 0) thead.append('<th colspan="5">' + i + '</th>')
-					for(var key in test){
-						var obj = test[key][i];
-						if(obj){
-							tbodys[key].append('<td>　' + '</td>')
-						}else{
-							tbodys[key].append('<td>　</td>')
-						}
-					}
-				}
-				
-				
-				//タイムライン表示化
-				$('#timeline').empty();
-				tbl.clone().show().appendTo('#timeline').fixedTable({
-		            width: 960,
-		            height: 135,
-		            fixedColumns: 1,
-		            classHeader: "fixedHead",// header style
-		            classFooter: "fixedFoot",// footer style
-		            classColumn: "fixedColumn",// fixed column on the left  
-		            fixedColumnWidth: 160,// the width of fixed column on the left   
-		            outerId: 'timeline',// table's parent div's id 
-		            Contentbackcolor: "#FFFFFF",// tds' in content area default background color  
-		            Contenthovercolor: "#99CCFF", // tds' in content area background color while hover. 
-		            fixedColumnbackcolor:"#187BAF", // tds' in fixed column default background color  
-		            fixedColumnhovercolor:"#99CCFF" // tds' in fixed column background color while hover.  
-		        });
-		        $('.fixedContainer table').css('table-layout','fixed')
-			})
+			});
+			
+		$('#delete_object')
+			.button()
+			.click(function(){
+					App.Instances.TimelineView.removeObject(window.currentObject.attr('id'));
+			});
 		//------------------------------------
 		
 		//textarea configiration
@@ -242,7 +180,7 @@
 					return false;
 				}
 			}
-		})
+		});
 		
 		
 		//load function 
@@ -261,7 +199,21 @@
 			}
 			$tabs.tabs( "option", "selected", savedata.idx);
 		}
-		$( "#dialog-message" ).dialog({
+		$( "#dialog_message" ).dialog({
+			autoOpen: false,
+			modal: true,
+			buttons: {
+				Ok: function(){
+					delete localStorage['savedata'];
+					location.href = location.href;
+					$( this ).dialog( "close" );
+				},
+				cancel:function(){
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+		$( "#new_object_dialog" ).dialog({
 			autoOpen: false,
 			modal: true,
 			buttons: {
@@ -276,79 +228,5 @@
 			}
 		});
 
-	//----------
-	// prop area
-		var setSlider = function(sourceId, option){
-			var input = $("#" + sourceId);
-			var option = option || {};
-			option.max = option.max || input.attr("max") || 100; //max:0 のときに100になっちゃうが、そんなパターンないだろー
-			option.min = option.min || input.attr("min") || 0;
-			option.val = option.val || input.val()       || 0;
-			option.step = option.step || input.attr("step") || 1;
-			
-			if(!input.val()){
-				input.val(option.val)
-			}
-			
-			var slider = $( "<div class='prop_slider'></div>" ).insertAfter( input ).slider({
-				min: +option.min,
-				max: +option.max,
-				range: "min",
-				step : +option.step,
-				//value: input[ 0 ].selectedIndex + 1,
-				value : +option.val,
-				slide: function( event, ui ) {
-					//input[ 0 ].selectedIndex = ui.value - 1;
-					input.val(ui.value)
-					callChain(this, sourceId, ui.value);
-				}
-			});
-			input.on('input', function() {
-				slider.slider( "value", $(this).val() );
-				callChain(this, sourceId, $(this).val());
-			});
-			input.attr("max", option.max)
-			input.attr("min", option.min);
-			$("<span> (" + option.min + " - " + option.max + ") </span>" ).insertAfter( input )
-		}
-		setSlider("opacity", {step: 0.01});
-		setSlider("top");
-		setSlider("left");
-		setSlider("width");
-		setSlider("height");
-		setSlider("transform_rotate");
-		setSlider("transform_scaleX", {step: 0.1});
-		setSlider("transform_scaleY", {step: 0.1});
-		setSlider("border-radius");
-		functionChain.push(function(name, value){
-			currentObject.css(name, value)
-		})
-		
-		// image setting
-		$("#image_url").on('input', function(){
-			currentObject.css('backgroundImage', 'url(' + $(this).val() +')')
-		})
-		// color setting
-		var colorInput = $('#colorSelector');
-		colorInput.ColorPicker({
-			color: colorInput.val() || '#0000ff',
-			onChange: function (hsb, hex, rgb) {
-				$("#colorSelector").val('#' + hex);
-				currentObject.css('backgroundColor', '#' + hex);
-			},
-			onShow : function(colpkr){
-				$(colpkr).css('z-index',9999)
-			}
-		});
-		// other css setting
-		$("#other_css").on('input', function(){
-			try{
-				var obj = JSON.parse($(this).val())
-				currentObject.css(obj);
-			}catch(e){
-			}
-		});
-		$( "#dialog" ).dialog({autoOpen:false, position:'right'});
-		$("#dialog_button").on("click", function(){$( "#dialog" ).dialog("open")});
 		
 	});

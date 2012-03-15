@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <title>Backbone Router Sample</title>
+    </head>
+    <body>
+        <div id="main">
+            <h1><a href="">Backbone Router Sample</a></h1>
+            <div id="entries">
+            </div>
+        </div>
+
+        <!--エントリをリスト表示するとき使うテンプレート-->
+        <script id="entry-template" type="text/template">
+            <div class="entry">
+                <h3><a href="javascript:void(0)"><%- title %></a></h3>
+            </div>
+        </script>
+
+        <!--エントリの詳細を表示するとき使うテンプレート-->
+        <script id="detail-template" type="text/template">
+            <h2><%- title %></h2>
+            <div id="content">
+                <%- content %>
+            </div>
+        </script>
+
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+        <script type="text/javascript" src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
+        <script type="text/javascript" src="http://documentcloud.github.com/backbone/backbone-min.js"></script>
+        <script type="text/javascript">
+            // エントリ。
+            var Entry = Backbone.Model.extend({
+                defaults: {
+                    title: "",
+                    content: ""
+                }
+            });
+
+            // ブログ。
+            var Blog = Backbone.Collection.extend({
+                model: Entry
+            });
+
+            // エントリを表示するビュー。
+            var EntryView = Backbone.View.extend({
+                template: _.template($("#entry-template").html()),
+
+                events: {
+                    "click a": "showDetail",
+                },
+
+                render: function() {
+                    $(this.el).html(this.template(this.model.toJSON()));
+                    return this;
+                },
+
+                // エントリタイトルをクリックしたら Router 経由で
+                // 詳細ページに移動する
+                showDetail: function() {
+                    window.router.navigate("entry/" + this.model.id, true);
+                    return false;
+                }
+            });
+
+            // エントリの詳細を表示するビュー。
+            var DetailView = Backbone.View.extend({
+                template: _.template($("#detail-template").html()),
+                
+                render: function() {
+                    $(this.el).html(this.template(this.model.toJSON()));
+                    return this;
+                }
+            });
+
+            // メインのビュー。
+            // エントリの一覧を表示する。
+            var BlogView = Backbone.View.extend({
+                el: $("#main"),
+               
+                events: {
+                    "click h1>a": "showIndex"
+                },
+
+                render: function() {
+                    var entriesEl = $(this.el).find("#entries");
+                    $(entriesEl).empty();
+
+                    this.model.each(function(entry) {
+                        var view = new EntryView({ model: entry });
+                        view.render();
+                        $(entriesEl).append(view.el);
+                    }, this);
+                    return this;
+                },
+
+                // ブログタイトル(?) がクリックされたら Router 経由で
+                // トップページを表示する。
+                showIndex: function() {
+                    window.router.navigate("", true);
+                    return false;
+                },
+
+                // 渡された ID に該当するエントリの詳細を表示。
+                showDetail: function(id) {
+                    var entry = this.model.get(parseInt(id));
+                    var view = new DetailView({ model: entry });
+                    view.render();
+                    
+                    var entriesEl = $(this.el).find("#entries");    
+                    $(entriesEl).empty();
+                    $(entriesEl).append(view.el);
+                }
+            });
+
+            // ルーター。
+            var AppRouter = Backbone.Router.extend({
+                // routes でルーターのメソッドと URL パターンをマッピングする。
+                // ルーターのメソッドがリクエストハンドラになる。
+                routes: {
+                    "entry/:id": "show",
+                    "entry/": "list",
+                    "": "list"
+                },
+
+                list: function() {
+                    window.App.render();
+                },
+
+                show: function(id) {
+                    window.App.showDetail(id);
+                }
+            });
+            window.router = new AppRouter();
+
+            var blog = new Blog();
+            blog.add(new Entry({ id: 1, title: "foo", content: "hoge" }));
+            blog.add(new Entry({ id: 2, title: "bar", content: "fuga" }));
+            window.App = new BlogView({ model: blog });
+            window.App.render();
+
+            // 履歴監視スタート。
+            // Backbone.history.start({ pushState: true }); で pushState は有効にできるけど、
+            // Web サーバーでホストしないとうまく動かないので無効にしておく。
+            Backbone.history.start();
+        </script>
+    </body>
+</html>

@@ -8,7 +8,8 @@
 		<script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
 		<script type="text/javascript" src="../js/jquery-ui-1.8.17.custom.min.js"></script>
 		<script type="text/javascript" src="../js/colorpicker.js"></script>
-		<script type="text/javascript" src="./jquery.kfAnimation.1.1.js"></script>
+		<!--<script type="text/javascript" src="./jquery.kfAnimation.1.1.js"></script>-->
+		<script type="text/javascript" src="../js/jquery.keyframeAnimation-0.3.2.js"></script>
 		<script type="text/javascript" src="../js/underscore.js"></script>
 		<script type="text/javascript" src="../js/backbone.js"></script>
 		<script type="text/javascript" src="../js/jquery.fixedtable.js"></script>
@@ -34,15 +35,16 @@
 			#tabs li .ui-icon-close { float: left; margin: 0.4em 0.2em 0 0; cursor: pointer; }	
 			#demo_envelope{position : relative; height : 750px; padding : 0px 10px;}
 			#demo_envelope>div { position : absolute; }
-			.code_area { width : 600px; height:50px; color : #006666; font-family : Monaco, 'Courier New' !important; font-size:12px !important; padding : 6px;}
+			.code_area { width : 600px; height:500px; color : #006666; font-family : Monaco, 'Courier New' !important; font-size:12px !important; padding : 6px;}
 			#tabs .ui-tabs-panel  { padding : 3px 3px !important;}
 			#demo_stage_size_disp { position : absolute; left : 430px; top : 280px; color : #eee; }
 			#infoArea { font-size: 1.3em; line-height: 1.1; margin: 1em 0; width: 750px; padding:0px 60px;}
 			#demo_stage { width : 320px; position : absolute; border : solid 1px gray; top : 20px; left : 90px; height : 418px; }
+			#demo_stage * { position:absolute; }
 			#image_url { width: 270px;}
 			.fixedArea th {width : 10px; height:20px;}
 			.fixedArea td {width : 10px; height:20px; border:solid gray; border-width:0 0 1px 1px;} 
-			.fixedArea .fixedHead td {width : 54px;} 
+			.fixedArea .fixedHead td {width : 50px;} 
 			.fixedArea table {border-spacing: 0px; border:solid gray; border-width:1px 1px 0 0;} 
 			
 			#tabs { margin-top: 1em; width: 630px; height :100px; top : 620px; left : 0px; }
@@ -50,6 +52,7 @@
 			#prop_area { width: 425px; height : 454px; position : absolute; top : 150px; left : 540px; overflow:hidden;padding:10px; } 
 			#timeline_area { width:980px; top:0px; left:0px; height:130px; padding:5px 10px;}
 			#button_area { width:350px; top:660px; left:640px;}
+			#demo_area div{ background-size: 100% 100%; }
 		</style>	
 	</head>
 	<body>
@@ -58,8 +61,7 @@
             <div id="target"></div>
 	
 		<!-- Tabs -->
-		<button id="relaod_tl">タイムライン構築</button>
-		<h2 class="demoHeaders">Demo </h2>
+		<h2 class="demoHeaders">Timeline Editor </h2>
 <div id="demo_envelope">
 	<div id="tab_dialog" title="Tab data">
 		<form>
@@ -69,11 +71,19 @@
 			</fieldset>
 		</form>
 	</div>
-	<div id="dialog-message" title="All Data Clear">
+	<div id="dialog_message" title="All Data Clear">
 	<p>
 		<span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
 		All data will be clear. ok?
 	</p>
+	</div>
+	<div id="new_object_dialog" title="New Object">
+		<form>
+			<fieldset class="ui-helper-reset">
+				<label for="tab_title">New Object</label>
+				<input type="text" name="tab_title" id="tab_title" value="box" class="ui-widget-content ui-corner-all" />
+			</fieldset>
+		</form>
 	</div>
 	
 		<!-- buttons -->
@@ -84,182 +94,16 @@
 			<button id="save" >現在のデータを保存する</button>
 			<button id="reset">リセット</button>
 			<button id="clearData" style="margin-left: 20px;">Clear Data</button>
+			<button id="add_object">オブジェクト追加</button>
+			
 		</div>
 		
 		<!-- timeline -->
 		<div id="timeline_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 			<div id="timeline" class="tableDiv"></div>
 			<div id="tableDiv_Arrays">
-       <table id="timeline_table" class="FixedTables" style="display:none;">
-            <thead>
-                <tr>
-                    <th>
-                        オブジェクト名/フレームNo
-                    </th>
-                    <th>
-                        1　
-                    </th>
-                    <th>
-                        2
-                    </th>
-                    <th>
-                        3
-                    </th>
-                    <th>
-                        4
-                    </th>
-                    <th>
-                        5
-                    </th>
-                    <th>
-                        6
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        Declare an array
-                    </td>
-                    <td>
-                        int[] x = new int[5];
-                    </td>
-                    <td>
-                        // key only integer or string<br />
-                        // value any<br />
-                        $array = array(1, 2, 3, 4, 5);<br />
-                        $arr = array(&quot;foo&quot; =&gt; &quot;bar&quot;, 12 =&gt; true);
-                    </td>
-                    <td>
-                        // key only integer or string<br />
-                        // value any<br />
-                        $array = array(1, 2, 3, 4, 5);<br />
-                        $arr = array(&quot;foo&quot; =&gt; &quot;bar&quot;, 12 =&gt; true);
-                    </td>
-                    <td>
-                        var arr:Array = [1,2,3];
-                    </td>
-                    <td>
-                        new Array()<br />
-                        new Array(len)<br />
-                        new Array([item0,[item1,[item2,...]]]<br />
-                        //Example<br />
-                        var objArray=new Array();<br />
-                        var arr=[0,1,2,3,4,5,6];
-                    </td>
-                    <td>
-                        a = [ 1, 'cat', 3.14 ]
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Initialize an array
-                    </td>
-                    <td>
-                        int[] x = new int[5] {<br />
-                        1, 2, 3, 4, 5};
-                    </td>
-                    <td>
-                        $arr = array(<br />
-                        &nbsp;&nbsp;&nbsp; &quot;somearray&quot; =&gt; array(<br />
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6 =&gt; 5,<br />
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 13 =&gt; 9,<br />
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;a&quot; =&gt; 42));
-                    </td>
-                    <td>
-                        $arr = array(<br />
-                        &nbsp;&nbsp;&nbsp; &quot;somearray&quot; =&gt; array(<br />
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6 =&gt; 5,<br />
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 13 =&gt; 9,<br />
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;a&quot; =&gt; 42));
-                    </td>
-                    <td>
-                        var arr:Array = new Array(1,2,3);
-                    </td>
-                    <td>
-                        var arr=[0,1,2,3,4,5,6];<br />
-                        var complexArray = [[1,{x:1, y:2}], [2, {x:3, y:4}]];
-                    </td>
-                    <td>
-                        inst_section = { 'cello' =&gt; 'string', 'trumpet' =&gt; 'brass', 'violin' =&gt;
-                        'string' }
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Add or remove element
-                    </td>
-                    <td>
-                        &nbsp;
-                    </td>
-                    <td>
-                        $arr[&quot;x&quot;] = 42;
-                        <br />
-                        // This adds a new element to<br />
-                        // the array with key &quot;x&quot;<br />
-                        $array[] = 6;<br />
-                        unset($arr[5]);
-                        <br />
-                        // This removes the element from the array
-                    </td>
-                    <td>
-                        $arr[&quot;x&quot;] = 42;
-                        <br />
-                        // This adds a new element to<br />
-                        // the array with key &quot;x&quot;<br />
-                        unset($arr[5]);
-                        <br />
-                        // This removes the element from the array
-                    </td>
-                    <td>
-                        arr.push(item);<br />
-                        arr.splice(at,count);
-                    </td>
-                    <td>
-                        // Add elements<br />
-                        objArray.push([value1[,value2[,....]]]);<br />
-                        //[1,2,3, 4].push("a","b") result is [1,2,3,4,"a","b"]<br />
-                        objArray.pop(); //remove the last element[1,2,3, 4].pop() result is [1,2,3]
-                        <br />
-                        objArray.shift(); //remove the first element.<br />
-                        objArray.splice(start, deleteCount, [item1[, item2[, . . . [,itemN]]]])
-                    </td>
-                    <td>
-                        &nbsp;
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Reallocate array
-                    </td>
-                    <td>
-                        n/a
-                    </td>
-                    <td>
-                        // This deletes the whole array
-                        <br />
-                        unset($arr);
-                    </td>
-                    <td>
-                        // This deletes the whole array<br />
-                        unset($arr);&nbsp;&nbsp;&nbsp;&nbsp;
-                    </td>
-                    <td>
-                        n/a
-                    </td>
-                    <td>
-                        n/a
-                    </td>
-                    <td>
-                        &nbsp;
-                    </td>
-                </tr>
-            </tbody>           
-        </table>
-
-
-</div>
-
+				<table id="timeline_table" class="FixedTables" style="display:none;"></table>
+			</div>
 		</div>
 		
 		<!-- props -->
@@ -267,12 +111,6 @@
 		<!-- demo area -->
 		<div id="demo_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 			<div id="demo_stage">
-				<div id="box1" class="demo_box">
-				#box1&nbsp;
-				</div>
-				<div id="box2" class="demo_box">
-				#box2&nbsp;
-				</div>
 			</div>
 			<p id="demo_stage_size_disp">
 			iPhone Size.  <br />
@@ -281,13 +119,8 @@
 		</div>
 		<!-- props -->
 		<div id="prop_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
-	        プロパティ:
-	        <script id="prop-template" type="text/html">
-	              <input class="name-input" type="text" value="<%= alpha %>"/>
-	                <!--   <input class="save-input" type="button" value="save"/>
-	                <input class="cancel-input" type="button" value="cancel"/>
-	                <input class="delete-input" type="button" value="delete"/> -->
-	        </script>
+	       <label>オブジェクト名: <span id="kf_object_name" style="font-size:20px;">aaa</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <!--<input type="text" id="kf_object_name" name="kf_object_name" value="test" />--></label><button id="delete_object">オブジェクト削除</button>
+			<label>フレームNo: <span id="frame_no">12</span></label>
 			<div id="prop_detail">
 				<label>透明度 : <input id="opacity" type="number" value="1" min="0" max="1" /></label>
 				<label>x :    <input id="left" type="number" max="520" min="-480"  /></label>
@@ -295,11 +128,9 @@
 				<label>w :　   <input id="width" type="number" max="320" min="0" /></label>
 				<label>h :　   <input id="height" type="number" value="1" max="420" min="0" /> </label>
 				<label>回転 :   <input id="transform_rotate" type="number" value="0" max="720" min="-720" />  </label>
-				<label>拡大率X : <input id="transform_scaleX" type="number" value="1" max="10" min="0" /> </label>
-				<label>拡大率Y : <input id="transform_scaleY" type="number" value="1" max="10" min="0" /> </label>
-				<label>角丸 :    <input id="border-radius" type="number" value="1" max="100" min="0" /> </label>
+				<label>角丸 :    <input id="border_radius" type="number" value="1" max="100" min="0" /> </label>
 				<br />
-				<label>背景、文字色 :<input type="text" maxlength="6" size="6" id="colorSelector" value="#522F7F" /></label>
+				<label>背景、文字色 :<input type="text" maxlength="6" size="6" id="color" value="#522F7F" /></label>
 				<br />
 				<hr />
 				以下はタイムライン稼働中に切り替え不可能<br />
