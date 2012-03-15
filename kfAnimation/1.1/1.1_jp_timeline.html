@@ -8,8 +8,8 @@
 		<script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
 		<script type="text/javascript" src="../js/jquery-ui-1.8.17.custom.min.js"></script>
 		<script type="text/javascript" src="../js/colorpicker.js"></script>
-		<!--<script type="text/javascript" src="./jquery.kfAnimation.1.1.js"></script>-->
-		<script type="text/javascript" src="../js/jquery.keyframeAnimation-0.3.2.js"></script>
+		<script type="text/javascript" src="./jquery.kfAnimation.1.1.js"></script>
+		<!--<script type="text/javascript" src="../js/jquery.keyframeAnimation-0.3.2.js"></script>-->
 		<script type="text/javascript" src="../js/underscore.js"></script>
 		<script type="text/javascript" src="../js/backbone.js"></script>
 		<script type="text/javascript" src="../js/jquery.fixedtable.js"></script>
@@ -35,7 +35,7 @@
 			#tabs li .ui-icon-close { float: left; margin: 0.4em 0.2em 0 0; cursor: pointer; }	
 			#demo_envelope{position : relative; height : 750px; width:980px; padding : 0px 10px;}
 			#demo_envelope>div { position : absolute; }
-			.code_area { width : 600px; height:500px; color : #006666; font-family : Monaco, 'Courier New' !important; font-size:12px !important; padding : 6px;}
+			.code_area { width : 920px; height:100px; color : #006666; font-family : Monaco, 'Courier New' !important; font-size:12px !important; padding : 6px;}
 			#tabs .ui-tabs-panel  { padding : 3px 3px !important;}
 			#demo_stage_size_disp { position : absolute; left : 430px; top : 280px; color : #eee; }
 			#infoArea { font-size: 1.3em; line-height: 1.1; margin: 1em 0; width: 750px; padding:0px 60px;}
@@ -47,7 +47,7 @@
 			.fixedArea .fixedHead td {width : 50px;} 
 			.fixedArea table {border-spacing: 0px; border:solid gray; border-width:1px 1px 0 0;} 
 			
-			#tabs { margin-top: 1em; width: 630px; height :100px; top : 626px; left : 0px; }
+			#tabs { margin-top: 1em; width: 982px; height :100px; top : 626px; left : 0px; }
 			#demo_area        { width: 530px; height : 470px; top : 156px; left : 0px; overflow:hidden;} 
 			#prop_area        { width: 425px; height : 324px; top : 156px; left : 540px; overflow:hidden;padding:10px; } 
 			#static_prop_area { width: 425px; height : 104px; top : 506px; left : 540px; padding:10px; }
@@ -75,7 +75,7 @@
 	<div id="dialog_message" title="All Data Clear">
 	<p>
 		<span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
-		All data will be clear. ok?
+		すべてのデータが削除されます。　よろしいですか？
 	</p>
 	</div>
 	<div id="new_object_dialog" title="New Object">
@@ -87,20 +87,9 @@
 		</form>
 	</div>
 	
-		<!-- buttons -->
-		<div id="button_area">
-			<span style="font-size: 1.3em;">Examples : </span>
-			<button id="add_tab">タブを追加</button>
-			<button id="execute">実行!</button>
-			<button id="save" >現在のデータを保存する</button>
-			<button id="reset">リセット</button>
-			<button id="clearData" style="margin-left: 20px;">Clear Data</button>
-			<button id="add_object">オブジェクト追加</button>
-			
-		</div>
-		
 		<!-- timeline -->
 		<div id="timeline_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+			<label>フレームNo: <span id="frame_no">12</span></label>
 			<div id="timeline" class="tableDiv"></div>
 			<div id="tableDiv_Arrays">
 				<table id="timeline_table" class="FixedTables" style="display:none;"></table>
@@ -120,14 +109,16 @@
 		</div>
 		<!-- props -->
 		<div id="prop_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+			<button id="execute">アニメーション実行!</button> &nbsp;
+			<button id="add_object">オブジェクト追加</button>
 			<div id="prop_detail">
 				<label>透明度 : <input id="opacity" type="number" value="1" min="0" max="1" /></label>
 				<label>x :    <input id="left" type="number" max="520" min="-480"  /></label>
 				<label>y :　   <input id="top" type="number" max="520" min="-480"  /></label>
 				<label>w :　   <input id="width" type="number" max="320" min="0" /></label>
 				<label>h :　   <input id="height" type="number" value="1" max="420" min="0" /> </label>
-				<label>回転 :   <input id="transform_rotate" type="number" value="0" max="720" min="-720" />  </label>
-				<label>角丸 :    <input id="border_radius" type="number" value="1" max="100" min="0" /> </label>
+				<label>回転 :   <input id="-webkit-transform" type="number" value="0" max="720" min="-720" />  </label>
+				<label>角丸 :    <input id="border-radius" type="number" value="1" max="100" min="0" /> </label>
 				<br />
 				<label>背景、文字色 :<input type="text" maxlength="6" size="6" id="color" value="#522F7F" /></label>
 				<br />
@@ -144,12 +135,15 @@
 		</div>
 		<div id="static_prop_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 	       <label>オブジェクト名: <span id="kf_object_name" style="font-size:20px;">aaa</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <!--<input type="text" id="kf_object_name" name="kf_object_name" value="test" />--></label><button id="delete_object">オブジェクト削除</button>
-			<label>フレームNo: <span id="frame_no">12</span></label>
+			
 				<label>画像 : <input id="image_url" type="text" value="http://s1-02.twitpicproxy.com/photos/full/526829532.jpg"/> </label><button id="clear_img">画像クリア</button><br />
 				<label>イージング : <input id="ease_type" type="text" /> </label><br />
 		</div>
 		<!-- tabs area -->
 		<div id="tabs">
+			<button id="save" >現在のタブへデータを保存する</button>
+			<button id="add_tab">タブを追加</button>
+			<button id="clearData" style="margin-left: 20px;">すべてのタブを削除</button>
 			<ul id="tabs_list">
 				<li><a href="#tabs-1">1</a></li>
 				<li><a href="#tabs-2">2</a></li>
@@ -338,6 +332,15 @@ $('#box2').keyframe({
 		</div>
 		
 		<textarea id="exec_area"></textarea>
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
 		<br />
 		<br />
 		<br />

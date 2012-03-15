@@ -6,7 +6,7 @@ $(function(){
 	window.App ={Models:{}, Collections:{}, Views:{}, Routers:{} , Instances:{}, Data:{}};//名前空間的な
 	
 	App.Data.initState = {width:'100px', height:'100px', backgroundColor:"#522F7F", left:'10px', top:'10px',
-						opacity:1, transform_rotate:0, transform_scaleX:0, transform_scaleY:0, border_radius:'0px'};
+						opacity:1, '-webkit-transform':'rotate(0deg)' , 'border-radius':'0px'};
 	
 	//本当は読み込み時に初期化される、はず。
 	App.Data.timeline = {
@@ -126,12 +126,12 @@ $(function(){
 			//slider系
 			var __setSlider = _.bind(setSlider, this);
 			__setSlider("opacity", {step: 0.01});
-			__setSlider("top", {unit: 'px'});
-			__setSlider("left", {unit: 'px'});
-			__setSlider("width", {unit: 'px'});
-			__setSlider("height", {unit: 'px'});
-			__setSlider("transform_rotate", {unit: 'px'});
-			__setSlider("border_radius", {unit: 'px'});
+			__setSlider("top", {sufix: 'px'});
+			__setSlider("left", {sufix: 'px'});
+			__setSlider("width", {sufix: 'px'});
+			__setSlider("height", {sufix: 'px'});
+			__setSlider("-webkit-transform", {prefix: 'rotate(', sufix: 'deg)'});
+			__setSlider("border-radius", {sufix: 'px'});
 		},
 		sliderInputs : {} //setSliderの中から呼ばれる
 	});
@@ -229,9 +229,10 @@ $(function(){
 			option.min = option.min || input.attr("min") || 0;
 			option.val = option.val || this.model.get(sourceId) || input.val() || 0;
 			option.step = option.step || input.attr("step") || 1;
-			option.unit = option.unit || '';
+			option.prefix = option.prefix || '';
+			option.sufix = option.sufix || '';
 			
-			option.val = (option.val + '').replace(option.unit, '')
+			option.val = (option.val + '').replace(option.sufix, '')
 			
 			if(!input.val()){
 				input.val(option.val)
@@ -246,8 +247,9 @@ $(function(){
 			var updaetView = _.bind(function(name, value){
 				if(currentObject){
 					//console.log(name + ' x:x '+ value + ' : ' + currentObject.css(name))
-					currentObject.css(name.replace('_','-'), value )
+					currentObject.css(name.replace(/_/g,'-'), value )
 					this.model.set(name, value);//modelへの変更
+					console.log(name.replace(/_/g,'-')+" : "+ value)
 					window.currentStyle[name] = value;
 				}
 			},this);
@@ -260,20 +262,20 @@ $(function(){
 				step : +option.step,
 				value : +option.val,
 				slide: function( event, ui ) {
-					input.val(ui.value)
-					updaetView(sourceId, ui.value+ option.unit);
+					input.val(ui.value);
+					updaetView(sourceId, option.prefix + ui.value+ option.sufix);
 					
 				}
 			});
 			input.on('input', function() {
-				slider.slider( "value", $(this).val() );
-				updaetView(sourceId, $(this).val()+ option.unit);
+				slider.slider( "value", $(this).val() );//スライダ座標変更
+				updaetView(sourceId, option.prefix + $(this).val()+ option.sufix);//画面更新
 			});
 			input.attr("max", option.max);
 			input.attr("min", option.min);
 			$('<span> (' + option.min + ' - ' + option.max + ') </span> <label><input type="checkbox" />アニメ化</label>' ).insertAfter( input )
 			this.sliderInputs[sourceId] = input;
-			input.val(option.val.replace(option.unit, '')).trigger('input');
+			input.val(option.val.replace(option.sufix, '').replace(option.prefix, '')).trigger('input');
 			
 			
 		}

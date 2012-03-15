@@ -67,22 +67,6 @@
 			}
 			return arr;
 		}
-		
-		function reset_box(){
-			 window.currentObject.css({
-					top:'100px', left:'15px',
-					width:'150px', height:'150px',
-					'-webkit-border-radius':'5px',
-					'-moz-border-radius':'5px',
-					background:'#522F7F',
-					color:'#fff',
-					'font-weight':'bold',
-					'line-height':'60px',
-					'text-align':'center',
-					cursor: 'default',
-					opacity: 1
-				});
-			}
 
 		//--------------------------------
 		// close icon: removing the tab on click
@@ -97,11 +81,6 @@
 			.button()
 			.click(function() {
 				$dialog.dialog( "open" );
-			});
-		$( "#reset" )
-			.button()
-			.click(function() {
-				reset_box();
 			});
 		//execute button
 		$( "#execute")
