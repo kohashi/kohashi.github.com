@@ -116,7 +116,7 @@
 					for(objName in timelineData){
 						kfData += '$("#' + objName + '").keyframe('
 						+ JSON.stringify(timelineData[objName])
-						+ ');'
+						+ ');\r\n\r\n'
 					}
 					console.log(kfData);
 					
@@ -180,7 +180,7 @@
 					return false;
 				}
 			}
-		})
+		});
 		
 		
 		//load function 

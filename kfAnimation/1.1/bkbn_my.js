@@ -181,6 +181,7 @@ $(function(){
 	App.Instances.PropView     = new App.Views.PropView(model);
 	App.Instances.TimelineView = new App.Views.TimelineView();
 	
+	$('#timeline_table td').eq(0).click();//初回は左上端を選択状態にする。
 	
 	//----------
 	// prop area
@@ -342,15 +343,19 @@ $(function(){
 			var anims = data[objId];
 			
 			window.currentFrame = frame;
-			
-			console.log(objId + ' : ' + frame + ' ###################');
-			console.log(data)
-			
+			window.currentObject = $("#" + objId);//currentObj変更（操作対象変更）
 			window.currentStyle = anims[frame] || {};//多分これ使わねぇなー…
 			
+			console.log(objId + ' : ' + frame + ' ###################');
+			
+			$('#frame_no').text(frame);//フレーム数表示
+			$('#kf_object_name').text(""+objId);//オブジェクト名表示
+			console.log($('#kf_object_name'))
+			
+			
+			//見た目、データ変更 -----------------------------
 			//色付け
 			setKeyframeColors();
-			
 			//選択中セル色つけ
 			$(this).css('backgroundColor', 'palegreen');
 			
@@ -360,8 +365,6 @@ $(function(){
 			})
 			
 			
-			//currentObj変更（操作対象変更）
-			window.currentObject = $("#" + objId);
 			
 			//データ合成: クリックしたフレームにおけるスタイルを生成
 			window.compositStyle = {};
@@ -377,7 +380,7 @@ $(function(){
 			
 			//PropViewのmodel変更（値適用）, render呼び出し
 			App.Instances.PropView.setModel(new App.Models.PropModel(window.compositStyle));
-		})
+		});
 	
 	}
 	//---------------------------------------------------------------------------------
