@@ -204,6 +204,36 @@
 				}
 			}
 		});
+	//----------
+	// prop area
 
 		
+	// image setting
+	$("#image_url").on('input', function(){
+		currentObject.css('backgroundImage', 'url(' + $(this).val() +')')
 	});
+	// color setting
+	var colorInput = $('#color');
+	colorInput.ColorPicker({
+		color: colorInput.val() || '#0000ff',
+		onChange: function (hsb, hex, rgb){
+			$("#color").val('#' + hex);
+			currentObject.css('backgroundColor', '#' + hex);
+		},
+		onShow : function(colpkr){
+			$(colpkr).css('z-index',9999)
+		}
+	});
+	// other css setting
+	$("#other_css").on('input', function(){
+		try{
+			var obj = JSON.parse($(this).val())
+			currentObject.css(obj);
+		}catch(e){
+		}
+	});
+	$( "#dialog" ).dialog({autoOpen:false, position:'right'});
+	$("#dialog_button").on("click", function(){$( "#dialog" ).dialog("open")});
+
+		
+});

@@ -6,7 +6,7 @@ $(function(){
 	window.App ={Models:{}, Collections:{}, Views:{}, Routers:{} , Instances:{}, Data:{}};//名前空間的な
 	
 	App.Data.initState = {width:'100px', height:'100px', backgroundColor:"#522F7F", left:'10px', top:'10px',
-						opacity:1, 'rotate':'(0deg)' , 'border-radius':'0px'};
+						opacity:1, 'rotate':'0deg' , 'border-radius':'0px'};
 	
 	//本当は読み込み時に初期化される、はず。
 	App.Data.timeline = {
@@ -17,7 +17,7 @@ $(function(){
 					obj2 : {
 						0 : App.Data.initState,
 						20 : {opacity : 0},
-						30 : {opacity : 1, top:'150px'}
+						30 : {opacity : 1, top:'150px', rotate:'125deg'}
 					}
 				};
 	
@@ -31,8 +31,7 @@ $(function(){
 			this.on('error',  this.errorFunc);
 		},
 		defaults :{ //Modelのデフォルト値を設定します
-			frame : 0,
-			color : '#ffffff'
+			frame : 0
 		},
 		destroy : {//破棄時のイベント。勝手にバインディングをされるよ。
 			
@@ -104,7 +103,7 @@ $(function(){
 		render : function(){
 			console.log("プロップレンダー！！");
 			
-			var data = this.model.toJSON();//モデル取得
+			//var data = this.model.toJSON();//モデル取得
 			//console.log(JSON.stringify(data))
 			//var html = this.template(data[0]);//テンプレート適用
 			//console.log($(this.el)	)
@@ -130,7 +129,7 @@ $(function(){
 			__setSlider("left", {sufix: 'px'});
 			__setSlider("width", {sufix: 'px'});
 			__setSlider("height", {sufix: 'px'});
-			__setSlider("rotate"/*, {prefix: 'rotate(', sufix: 'deg)'}*/ );
+			__setSlider("rotate", {sufix: 'deg'} );
 			__setSlider("border-radius", {sufix: 'px'});
 		},
 		sliderInputs : {} //setSliderの中から呼ばれる
@@ -183,37 +182,7 @@ $(function(){
 	
 	$('#timeline_table td').eq(0).click();//初回は左上端を選択状態にする。
 	
-	//----------
-	// prop area
 
-		
-		// image setting
-		$("#image_url").on('input', function(){
-			currentObject.css('backgroundImage', 'url(' + $(this).val() +')')
-		})
-		// color setting
-		var colorInput = $('#color');
-		colorInput.ColorPicker({
-			color: colorInput.val() || '#0000ff',
-			onChange: function (hsb, hex, rgb){
-				$("#color").val('#' + hex);
-				currentObject.css('backgroundColor', '#' + hex);
-			},
-			onShow : function(colpkr){
-				$(colpkr).css('z-index',9999)
-			}
-		});
-		// other css setting
-		$("#other_css").on('input', function(){
-			try{
-				var obj = JSON.parse($(this).val())
-				currentObject.css(obj);
-			}catch(e){
-			}
-		});
-		$( "#dialog" ).dialog({autoOpen:false, position:'right'});
-		$("#dialog_button").on("click", function(){$( "#dialog" ).dialog("open")});
-	
 	
 	//---------------------------------------------------------------------------------
 	// Render系の処理
@@ -246,7 +215,7 @@ $(function(){
 			
 			var updaetView = _.bind(function(name, value){
 				if(currentObject){
-					console.log(name + ' x:x '+ value + ' : ' + currentObject.css(name))
+					//console.log(name + ' x:x '+ value + ' : ' + currentObject.css(name))
 					currentObject.css(name, value )
 					
 					this.model.set(name, value);//modelへの変更
@@ -296,9 +265,9 @@ $(function(){
 			for(var key in data){
 				var obj = data[key][i];
 				if(obj){
-					tbodys[key].append('<td>　' + '</td>')
+					tbodys[key].append('<td>　' + '</td>');
 				}else{
-					tbodys[key].append('<td>　</td>')
+					tbodys[key].append('<td>　</td>');
 				}
 			}
 		}
@@ -325,13 +294,11 @@ $(function(){
 				var targetTR = $('#timeline_table tr').eq(idx); //操作対象のTR
 				
 				var f = data[objId];
-				console.log(f);
-				console.log(targetTR)
 				
 				targetTR.children().each(function(i){
 					$(this).css('background', f[i] ? 'red': 'white');//キーフレームアリなしで色分け
-				})
-			})
+				});
+			});
 		};
 		setKeyframeColors();
 		
@@ -348,11 +315,9 @@ $(function(){
 			window.currentObject = $("#" + objId);//currentObj変更（操作対象変更）
 			window.currentStyle = anims[frame] || {};//多分これ使わねぇなー…
 			
-			console.log(objId + ' : ' + frame + ' ###################');
 			
 			$('#frame_no').text(frame);//フレーム数表示
 			$('#kf_object_name').text(""+objId);//オブジェクト名表示
-			console.log($('#kf_object_name'))
 			
 			
 			//見た目、データ変更 -----------------------------
@@ -364,26 +329,32 @@ $(function(){
 			//選択中セルのオブジェクトタイトル色付け
 			$(".fixedColumn .fixedTable tr").each(function(){
 				$(this).css('backgroundColor', $(this).text() == objId? '#palegreen':'');
-			})
-			
-			
-			
-			//データ合成: クリックしたフレームにおけるスタイルを生成
-			window.compositStyle = {};
-			_.each(_.keys(anims), function(keyFrame){
-				if(keyFrame <= +frame){
-					for(var k in anims[keyFrame]){
-						window.compositStyle[k] = anims[keyFrame][k] || window.compositStyle[k];
-					}
-				}else return false;
 			});
-			window.compositStyle.frame = +frame;
 			
+			// クリックしたフレームにおけるスタイルを生成
+			window.compositStyle = getCompositStyle(anims, frame);
+			//ぜんぶに適用ー
+			for(var _id in data){
+				$('#'+_id).css(getCompositStyle(data[_id], frame));
+			}
 			
 			//PropViewのmodel変更（値適用）, render呼び出し
 			App.Instances.PropView.setModel(new App.Models.PropModel(window.compositStyle));
 		});
+	}
 	
+	//データ合成：指定したフレームまでのアニメーションを生成
+	function getCompositStyle(animObject, endFrame){
+		var compositStyle = {};
+		_.each(_.keys(animObject), function(keyFrame){
+			if(keyFrame <= +endFrame){
+				for(var k in animObject[keyFrame]){
+					compositStyle[k] = animObject[keyFrame][k] || compositStyle[k];
+				}
+			}else return false;
+		});
+		compositStyle.frame = +endFrame;
+		return compositStyle
 	}
 	//---------------------------------------------------------------------------------
 })
