@@ -280,7 +280,7 @@ $(function(){
 	
 	//■タイムライン表示再構築 -------------------------------------------------------------------
 	function buildTimelineTable(data){
-		var tbl = $('#timeline_table').show().empty().append('<thead>').append('<tbody>');
+		var tbl = $('#timeline_table').empty().append('<thead>').append('<tbody>');
 		
 		//初期化
 		var thead = $('<tr>').appendTo(tbl.find('thead')).append('<th>オブジェクト名＼フレーム数</th>');
@@ -303,8 +303,8 @@ $(function(){
 		//タイムライン表示化
 		$('#timeline').empty();
 		tbl.clone().show().appendTo('#timeline').fixedTable({
-			width: 960,
-			height: 135,
+			width: 950,
+			height: 130,
 			fixedColumns: 1,
 			classHeader: "fixedHead",// header style
 			classFooter: "fixedFoot",// footer style

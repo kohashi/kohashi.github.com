@@ -115,14 +115,14 @@
 					var kfData = '';
 					for(objName in timelineData){
 						kfData += '$("#' + objName + '").keyframe('
-						+ JSON.stringify(timelineData[objName])
+						+ JSON.stringify(timelineData[objName], null, " ")
 						+ ');\r\n\r\n'
 					}
 					console.log(kfData);
 					
-					$(targetId).find('textarea').val(kfData);
+					$('#exec_area').val(kfData);
 					
-					eval($(targetId).find('textarea').val());
+					eval(kfData);
 				} catch(e) {
 					alert('It was a problem with your code!');
 				}

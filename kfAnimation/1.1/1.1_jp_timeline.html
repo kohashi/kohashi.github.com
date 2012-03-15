@@ -19,9 +19,9 @@
 		<style type="text/css">
 			/*demo page css*/
 			body{ font: 62.5% "Trebuchet MS", sans-serif; margin: auto; width:980px;}
-			h1 {font-size: 3em;}
+			h1 {font-size: 3em; margin:0px;}
 			h1 sub{ font-size : 65%; color:gray;}
-			.demoHeaders { margin-top: 2em; }
+			.demoHeaders { margin-top: 0.5em; }
 			#dialog_link {padding: .4em 1em .4em 20px;text-decoration: none;position: relative;}
 			#dialog_link span.ui-icon {margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
 			ul#icons {margin: 0; padding: 0;}
@@ -33,7 +33,7 @@
 			#dialog input, #dialog textarea { width: 95%; }
 			#add_tab { cursor: pointer; }
 			#tabs li .ui-icon-close { float: left; margin: 0.4em 0.2em 0 0; cursor: pointer; }	
-			#demo_envelope{position : relative; height : 750px; padding : 0px 10px;}
+			#demo_envelope{position : relative; height : 750px; width:980px; padding : 0px 10px;}
 			#demo_envelope>div { position : absolute; }
 			.code_area { width : 600px; height:500px; color : #006666; font-family : Monaco, 'Courier New' !important; font-size:12px !important; padding : 6px;}
 			#tabs .ui-tabs-panel  { padding : 3px 3px !important;}
@@ -47,10 +47,11 @@
 			.fixedArea .fixedHead td {width : 50px;} 
 			.fixedArea table {border-spacing: 0px; border:solid gray; border-width:1px 1px 0 0;} 
 			
-			#tabs { margin-top: 1em; width: 630px; height :100px; top : 620px; left : 0px; }
-			#demo_area { width: 530px; height : 470px; position : absolute; top : 150px; left : 0px; overflow:hidden;} 
-			#prop_area { width: 425px; height : 454px; position : absolute; top : 150px; left : 540px; overflow:hidden;padding:10px; } 
-			#timeline_area { width:980px; top:0px; left:0px; height:130px; padding:5px 10px;}
+			#tabs { margin-top: 1em; width: 630px; height :100px; top : 626px; left : 0px; }
+			#demo_area        { width: 530px; height : 470px; top : 156px; left : 0px; overflow:hidden;} 
+			#prop_area        { width: 425px; height : 324px; top : 156px; left : 540px; overflow:hidden;padding:10px; } 
+			#static_prop_area { width: 425px; height : 104px; top : 506px; left : 540px; padding:10px; }
+			#timeline_area { width:965px; top:0px; left:0px; height:130px; padding:10px;}
 			#button_area { width:350px; top:660px; left:640px;}
 			#demo_area div{ background-size: 100% 100%; }
 		</style>	
@@ -119,8 +120,6 @@
 		</div>
 		<!-- props -->
 		<div id="prop_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
-	       <label>オブジェクト名: <span id="kf_object_name" style="font-size:20px;">aaa</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <!--<input type="text" id="kf_object_name" name="kf_object_name" value="test" />--></label><button id="delete_object">オブジェクト削除</button>
-			<label>フレームNo: <span id="frame_no">12</span></label>
 			<div id="prop_detail">
 				<label>透明度 : <input id="opacity" type="number" value="1" min="0" max="1" /></label>
 				<label>x :    <input id="left" type="number" max="520" min="-480"  /></label>
@@ -132,10 +131,6 @@
 				<br />
 				<label>背景、文字色 :<input type="text" maxlength="6" size="6" id="color" value="#522F7F" /></label>
 				<br />
-				<hr />
-				以下はタイムライン稼働中に切り替え不可能<br />
-				<label>画像 : <input id="image_url" type="text" value="http://s1-02.twitpicproxy.com/photos/full/526829532.jpg"/> </label><button id="clear_img">画像クリア</button><br />
-				<label>イージング : <input id="ease_type" type="text" /> </label><br />
 				<label>フリー(JSON-CSS) : <textarea id="other_css"></textarea> <a href="#!" id="dialog_button">?</a></label>
 				<div id="dialog" title="フリーJSON-CSSについて">
 	<p>JSONスタイルでCSSを定義してください. <br /> e.g) <pre>
@@ -146,6 +141,12 @@
 	</pre></p>
 </div>
 			</div>
+		</div>
+		<div id="static_prop_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+	       <label>オブジェクト名: <span id="kf_object_name" style="font-size:20px;">aaa</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <!--<input type="text" id="kf_object_name" name="kf_object_name" value="test" />--></label><button id="delete_object">オブジェクト削除</button>
+			<label>フレームNo: <span id="frame_no">12</span></label>
+				<label>画像 : <input id="image_url" type="text" value="http://s1-02.twitpicproxy.com/photos/full/526829532.jpg"/> </label><button id="clear_img">画像クリア</button><br />
+				<label>イージング : <input id="ease_type" type="text" /> </label><br />
 		</div>
 		<!-- tabs area -->
 		<div id="tabs">
@@ -335,6 +336,17 @@ $('#box2').keyframe({
 			</p>
 		</div>
 		</div>
+		
+		<textarea id="exec_area"></textarea>
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
 	</body>
 </html>
 
