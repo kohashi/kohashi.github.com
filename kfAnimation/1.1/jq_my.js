@@ -88,19 +88,17 @@
 			.click(function(){
 				var selectedId = $tabs.tabs('option', 'selected') ;
 				var targetId = $("#tabs_list").children().eq(selectedId).find("a").attr("href");
+				var timelineData = window.App.Instances.TimelineView.model.toJSON();
+				var kfData = '';
+				for(objName in timelineData){
+					kfData += '$("#' + objName + '").keyframe('
+					+ JSON.stringify(timelineData[objName], null, " ")
+					+ ');\r\n\r\n'
+				}
+				
+				$('#exec_area').val(kfData);
+					
 				try {
-					var timelineData = window.App.Instances.TimelineView.model.toJSON();
-					console.log(timelineData);
-					var kfData = '';
-					for(objName in timelineData){
-						kfData += '$("#' + objName + '").keyframe('
-						+ JSON.stringify(timelineData[objName], null, " ")
-						+ ');\r\n\r\n'
-					}
-					console.log(kfData);
-					
-					$('#exec_area').val(kfData);
-					
 					eval(kfData);
 				} catch(e) {
 					alert('It was a problem with your code!');

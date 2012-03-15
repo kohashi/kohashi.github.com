@@ -6,7 +6,7 @@ $(function(){
 	window.App ={Models:{}, Collections:{}, Views:{}, Routers:{} , Instances:{}, Data:{}};//名前空間的な
 	
 	App.Data.initState = {width:'100px', height:'100px', backgroundColor:"#522F7F", left:'10px', top:'10px',
-						opacity:1, '-webkit-transform':'rotate(0deg)' , 'border-radius':'0px'};
+						opacity:1, 'rotate':'(0deg)' , 'border-radius':'0px'};
 	
 	//本当は読み込み時に初期化される、はず。
 	App.Data.timeline = {
@@ -130,7 +130,7 @@ $(function(){
 			__setSlider("left", {sufix: 'px'});
 			__setSlider("width", {sufix: 'px'});
 			__setSlider("height", {sufix: 'px'});
-			__setSlider("-webkit-transform", {prefix: 'rotate(', sufix: 'deg)'});
+			__setSlider("rotate"/*, {prefix: 'rotate(', sufix: 'deg)'}*/ );
 			__setSlider("border-radius", {sufix: 'px'});
 		},
 		sliderInputs : {} //setSliderの中から呼ばれる
@@ -232,7 +232,7 @@ $(function(){
 			option.prefix = option.prefix || '';
 			option.sufix = option.sufix || '';
 			
-			option.val = (option.val + '').replace(option.sufix, '')
+			option.val = (option.val + '').replace(option.sufix, '').replace(option.prefix, '')
 			
 			if(!input.val()){
 				input.val(option.val)
@@ -246,10 +246,10 @@ $(function(){
 			
 			var updaetView = _.bind(function(name, value){
 				if(currentObject){
-					//console.log(name + ' x:x '+ value + ' : ' + currentObject.css(name))
-					currentObject.css(name.replace(/_/g,'-'), value )
+					console.log(name + ' x:x '+ value + ' : ' + currentObject.css(name))
+					currentObject.css(name, value )
+					
 					this.model.set(name, value);//modelへの変更
-					console.log(name.replace(/_/g,'-')+" : "+ value)
 					window.currentStyle[name] = value;
 				}
 			},this);
