@@ -209,8 +209,13 @@
 
 		
 	// image setting
-	$("#image_url").on('input', function(){
-		currentObject.css('backgroundImage', 'url(' + $(this).val() +')')
+	$("#backgroundImage").on('input', function(){
+		var imgUrl = 'url(' + $(this).val() +')';
+		var objName = currentObject.attr('id');
+		currentObject.css('backgroundImage', imgUrl);
+		var mdl = window.App.Instances.TimelineView.model.get(objName);
+		mdl[0].backgroundImage = imgUrl;
+		App.Instances.TimelineView.model.set(objName, mdl);
 	});
 	// color setting
 	var colorInput = $('#color');

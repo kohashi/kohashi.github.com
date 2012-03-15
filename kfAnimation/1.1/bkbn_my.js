@@ -11,15 +11,16 @@ $(function(){
 	//本当は読み込み時に初期化される、はず。
 	App.Data.timeline = {
 					obj1 : {
-						 0 : App.Data.initState,
+						 0 : _.clone(App.Data.initState),
 						10 : {opacity : 1, left:'180px'}
 					},
 					obj2 : {
-						0 : App.Data.initState,
+						0 : _.clone(App.Data.initState),
 						20 : {opacity : 0},
 						30 : {opacity : 1, top:'150px', rotate:'125deg'}
 					}
 				};
+	App.Data.timeline.obj2[0].backgroundImage = "http://s1-02.twitpicproxy.com/photos/full/526829532.jpg";
 	
 	//----------------------------------------------------------------------------------
 	// *****  M o d e l  *****
@@ -158,9 +159,13 @@ $(function(){
 		},
 		renderNewObject: function(newObjName, frame){
 			var frame = frame || 0;
-			$('<div id="'+newObjName+'"/>').appendTo($("#demo_stage"))
+			var anims = this.model.get(newObjName);
+			var div = $('<div id="'+newObjName+'"/>').appendTo($("#demo_stage"))
 						.text('#'+newObjName)
-						.css(this.model.get(newObjName)[frame]);
+						.css(anims[frame]);
+			if(!!anims[0].backgroundImage){
+				div.css('backgroundImage', 'url(' + anims[0].backgroundImage + ')');
+			}
 		},
 		removeObject:function(objName){
 			this.model.unset(objName);
@@ -242,7 +247,8 @@ $(function(){
 			});
 			input.attr("max", option.max);
 			input.attr("min", option.min);
-			$('<span> (' + option.min + ' - ' + option.max + ') </span> <label><input type="checkbox" />アニメ化</label>' ).insertAfter( input )
+			//$('<span> (' + option.min + ' - ' + option.max + ') </span> <label><input type="checkbox" />アニメ化</label>' ).insertAfter( input );
+			$('<span> (' + option.min + ' - ' + option.max + ') </span> ' ).insertAfter( input );
 			this.sliderInputs[sourceId] = input;
 			input.val(option.val.replace(option.sufix, '').replace(option.prefix, '')).trigger('input');
 			
@@ -337,6 +343,8 @@ $(function(){
 			for(var _id in data){
 				$('#'+_id).css(getCompositStyle(data[_id], frame));
 			}
+			console.log(anims[0].backgroundImage);
+			$("#backgroundImage").val(anims[0].backgroundImage);
 			
 			//PropViewのmodel変更（値適用）, render呼び出し
 			App.Instances.PropView.setModel(new App.Models.PropModel(window.compositStyle));
