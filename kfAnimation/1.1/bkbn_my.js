@@ -9,7 +9,7 @@ $(function(){
 						opacity:1, 'rotate':'0deg' , 'border-radius':'0px'};
 	
 	//本当は読み込み時に初期化される、はず。
-	App.Data.timeline = {
+	App.Data.timeline = App.Data.timeline || {
 					obj1 : {
 						 0 : _.clone(App.Data.initState),
 						10 : {opacity : 1, left:'180px'}
@@ -20,7 +20,6 @@ $(function(){
 						30 : {opacity : 1, top:'150px', rotate:'125deg'}
 					}
 				};
-	App.Data.timeline.obj2[0].backgroundImage = "http://s1-02.twitpicproxy.com/photos/full/526829532.jpg";
 	
 	//----------------------------------------------------------------------------------
 	// *****  M o d e l  *****
@@ -150,15 +149,19 @@ $(function(){
 	
 	App.Views.TimelineView = Backbone.View.extend({
 		//■オーバーライド関数 Overrides
-		initialize : function(){
+		initialize : function(model){
+			model && this.setModel(model);
+		},
+		//model : new App.Models.TimelineModel(App.Data.timeline),
+		//■自分で定義した関数 Custom function -----------
+		setModel: function(newModel){
+			this.model = newModel;
 			this.model.on("change", this.render, this);
 			this.render();
 			for(var objName in this.model.attributes){
 				this.renderNewObject(objName, 0);
 			}
 		},
-		model : new App.Models.TimelineModel(App.Data.timeline),
-		//■自分で定義した関数 Custom function -----------
 		render : function(){
 			//テーブル構築
 			var data = this.model.toJSON();
@@ -196,8 +199,8 @@ $(function(){
 	App.Instances.PropView     = new App.Views.PropView(model);
 	App.Instances.TimelineView = new App.Views.TimelineView();
 	
-	$('#timeline_table td').eq(0).click();//初回は左上端を選択状態にする。
-	
+	//表示中のタブから読み込み
+	$('#read_from_tab').click();
 
 	
 	//---------------------------------------------------------------------------------

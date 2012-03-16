@@ -85,8 +85,6 @@
 		//execute button
 		$( "#execute").button()
 			.click(function(){
-				var selectedId = $tabs.tabs('option', 'selected') ;
-				var targetId = $("#tabs_list").children().eq(selectedId).find("a").attr("href");
 				var timelineData = window.App.Instances.TimelineView.model.toJSON();
 				var kfData = '';
 				for(objName in timelineData){
@@ -142,9 +140,21 @@
 			});
 		$('#write_to_tab').button().click(function(){
 			//タブへ書き出し
+			var selectedId = $tabs.tabs('option', 'selected') ;
+			var targetId = $("#tabs_list").children().eq(selectedId).find("a").attr("href");
+			$(targetId).find('textarea').val(JSON.stringify(App.Instances.TimelineView.model.toJSON(), null, "\t"));
 		})
 		$('#read_from_tab').button().click(function(){
 			//タブから読み込み
+			var selectedId = $tabs.tabs('option', 'selected') ;
+			var targetId = $("#tabs_list").children().eq(selectedId).find("a").attr("href");
+			var jsonString = $(targetId).find('textarea').val();
+			//JSON.parse(jsonString);//コメント等が使用できないので却下
+			var timelineObj = eval("(" + jsonString+ ")");//だせぇ…仕方ない
+			
+			$("#demo_stage").empty();
+			App.Instances.TimelineView.setModel(new App.Models.TimelineModel(timelineObj));
+			$('#timeline_table td').eq(0).click();//初回は左上端を選択状態にする。
 		})
 		//選択中のフレームを削除
 		$('#delete_current_frame').button().click(function(){
