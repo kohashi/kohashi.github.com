@@ -57,7 +57,8 @@
 		}
 		
 		function getTabsData(){
-			var labels = $tabs.children().first().children().find('a');
+			var labels = $tabs.find('#tabs_list').find('a')
+			window.$tbs = $tabs
 			var contents = $tabs.children('div').children('textarea')
 			var arr  = [];
 			for(var i=0; i<labels.length; i++){
@@ -77,14 +78,12 @@
 		});
 		
 		// addTab button: just opens the dialog
-		$( "#add_tab" )
-			.button()
+		$( "#add_tab" ).button()
 			.click(function() {
 				$dialog.dialog( "open" );
 			});
 		//execute button
-		$( "#execute")
-			.button()
+		$( "#execute").button()
 			.click(function(){
 				var selectedId = $tabs.tabs('option', 'selected') ;
 				var targetId = $("#tabs_list").children().eq(selectedId).find("a").attr("href");
@@ -105,28 +104,25 @@
 				}
 			});
 		//save button
-		$('#save')
-			.button()
+		$('#save').button()
 			.click(function(){
 				var savedata = { idx : $tabs.tabs('option', 'selected') };
 				savedata.tabs = getTabsData();
+				console.log(JSON.stringify(savedata))
 				localStorage['savedata'] = JSON.stringify(savedata);
 			});
 		//clearData button
-		$('#clearData')
-			.button()
+		$('#clearData').button()
 			.click(function(){
 					$( "#dialog:ui-dialog" ).dialog( "destroy" );
 					$( "#dialog_message" ).dialog( "open" );
 			});	
-		$('#clear_img')
-			.button()
+		$('#clear_img').button()
 			.click(function(){
 					currentObject.css('backgroundImage', 'none')
 			});	
 			
-		$('#add_object')
-			.button()
+		$('#add_object').button()
 			.click(function(){
 				//$("#new_object_dialog").dialog( "open" ); //jQ-Prompt
 				var newObjName = prompt("オブジェクト名入れてください(絶対に重複名入れないでください)");
@@ -136,17 +132,29 @@
 				}
 			});
 			
-		$('#delete_object')
-			.button()
+		$('#delete_object').button()
 			.click(function(){
 					App.Instances.TimelineView.removeObject(window.currentObject.attr('id'));
 			});
-		$('#go_zero_frame')
-			.button()
+		$('#go_zero_frame').button()
 			.click(function(){
 					$('#timeline_table td').eq(0).click();
 			});
-		//------------------------------------
+		$('#write_to_tab').button().click(function(){
+			//タブへ書き出し
+		})
+		$('#read_from_tab').button().click(function(){
+			//タブから読み込み
+		})
+		//選択中のフレームを削除
+		$('#delete_current_frame').button().click(function(){
+			if(window.currentFrame == 0){
+				alert('0フレーム目は削除できません');
+				return;
+			}
+			App.Instances.TimelineView.model.deletePropData(window.currentObject[0].id, window.currentFrame )
+		})
+		//-----------------------------------
 		
 		//textarea configiration
 		$(document).on('keydown', 'textarea', function(e){

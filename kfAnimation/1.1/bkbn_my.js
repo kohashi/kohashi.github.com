@@ -47,9 +47,10 @@ $(function(){
 		changeFunc : function(model){
 			//タイムラインのmodelへの更新処理
 			var objName = window.currentObject.attr("id");
-			var tmp = App.Instances.TimelineView.model.get(objName)
-			tmp[window.currentFrame] = model.toJSON();
-			App.Instances.TimelineView.model.set(objName, tmp);
+			//var tmp = App.Instances.TimelineView.model.get(objName)
+			//tmp[window.currentFrame] = model.toJSON();
+			//App.Instances.TimelineView.model.set(objName, tmp);
+			App.Instances.TimelineView.model.setPropData(objName, window.currentFrame, model.toJSON());
 		},
 		errorFunc : function(model, errMsg){
 			//console.log(errMsg);
@@ -73,7 +74,17 @@ $(function(){
 		//■自分で定義した関数 Custom function -----------
 		changeFunc: function(model){
 			//永続化処理とか
-		}
+		},
+		setPropData : function(objId, frame, propData){
+			var tmp = this.get(objId);
+			tmp[frame] = propData;
+			this.set(objId, tmp);
+		},
+		deletePropData :function(objId, frame){
+			var tmp = this.get(objId);
+			delete tmp[frame];
+			this.set(objId, tmp)
+		} 
 	});
 	
 	

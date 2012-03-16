@@ -36,8 +36,9 @@
 			#tabs li .ui-icon-close { float: left; margin: 0.4em 0.2em 0 0; cursor: pointer; }	
 			#demo_envelope{position : relative; height : 750px; width:980px; padding : 0px 10px;}
 			#demo_envelope>div { position : absolute; }
-			.code_area { width : 920px; height:100px; color : #006666; font-family : Monaco, 'Courier New' !important; font-size:12px !important; padding : 6px;}
+			.code_area { width : 960px; height:50px; color : #006666; font-family : Monaco, 'Courier New' !important; font-size:12px !important; padding : 6px;}
 			#tabs .ui-tabs-panel  { padding : 3px 3px !important;}
+			
 			#demo_stage_size_disp { position : absolute; left : 430px; top : 280px; color : #eee; }
 			#infoArea { font-size: 1.3em; line-height: 1.1; margin: 1em 0; width: 750px; padding:0px 60px;}
 			#demo_stage { width : 320px; position : absolute; border : solid 1px gray; top : 20px; left : 90px; height : 418px; }
@@ -48,7 +49,8 @@
 			.fixedArea .fixedHead td {width : 50px;} 
 			.fixedArea table {border-spacing: 0px; border:solid gray; border-width:1px 1px 0 0;} 
 			
-			#tabs { margin-top: 1em; width: 982px; height :100px; top : 626px; left : 0px; }
+			#tab_buttons { top:636px; left:0px;}
+			#tabs { margin-top: 1em; width: 982px; height :100px; top : 656px; left : 0px; }
 			#demo_area        { width: 530px; height : 470px; top : 156px; left : 0px; overflow:hidden;} 
 			#prop_area        { width: 425px; height : 324px; top : 156px; left : 540px; overflow:hidden;padding:10px; } 
 			#static_prop_area { width: 425px; height : 104px; top : 506px; left : 540px; padding:10px; }
@@ -110,9 +112,10 @@
 		</div>
 		<!-- props -->
 		<div id="prop_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
-			<button id="execute">アニメーション実行!</button> &nbsp;
-			<button id="add_object">オブジェクト追加</button> &nbsp;&nbsp;
-			<button id="go_zero_frame">0フレームへ</button>
+			<button id="execute">アニメーション実行!</button>
+			<button id="add_object">オブジェクト追加</button>
+			<button id="go_zero_frame">初期値</button>
+			<button id="delete_current_frame">フレーム削除</button>
 			<div id="prop_detail">
 				<label>透明度 : <input id="opacity" type="number" value="1" min="0" max="1" /></label>
 				<label>x :    <input id="left" type="number" max="520" min="-480"  /></label>
@@ -142,10 +145,15 @@
 				<label>イージング : <input id="ease_type" type="text" /> </label><br />
 		</div>
 		<!-- tabs area -->
-		<div id="tabs">
-			<button id="save" >現在のタブへデータを保存する</button>
+		
+		<div id="tab_buttons">
+			<button id="write_to_tab" >タブへ書き出し</button>
+			<button id="read_from_tab" >タブから読み込み</button>
+			<button id="save" >下記をローカルストレージに保存する</button>
 			<button id="add_tab">タブを追加</button>
 			<button id="clearData" style="margin-left: 20px;">すべてのタブを削除</button>
+		</div>
+		<div id="tabs">
 			<ul id="tabs_list">
 				<li><a href="#tabs-1">1</a></li>
 				<li><a href="#tabs-2">2</a></li>
