@@ -10,6 +10,7 @@
 		<script type="text/javascript" src="../js/colorpicker.js"></script>
 		<!--<script type="text/javascript" src="./jquery.kfAnimation.1.1.js"></script>-->
 		<script type="text/javascript" src="../js/jquery.keyframeAnimation-0.3.2.js"></script>
+		<script type="text/javascript" src="../js/jquery-css-transform.js"></script>
 		<script type="text/javascript" src="../js/underscore.js"></script>
 		<script type="text/javascript" src="../js/backbone.js"></script>
 		<script type="text/javascript" src="../js/jquery.fixedtable.js"></script>
@@ -19,9 +20,9 @@
 		<style type="text/css">
 			/*demo page css*/
 			body{ font: 62.5% "Trebuchet MS", sans-serif; margin: auto; width:980px;}
-			h1 {font-size: 3em;}
+			h1 {font-size: 3em; margin:0px;}
 			h1 sub{ font-size : 65%; color:gray;}
-			.demoHeaders { margin-top: 2em; }
+			.demoHeaders { margin-top: 0.5em; }
 			#dialog_link {padding: .4em 1em .4em 20px;text-decoration: none;position: relative;}
 			#dialog_link span.ui-icon {margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
 			ul#icons {margin: 0; padding: 0;}
@@ -33,24 +34,27 @@
 			#dialog input, #dialog textarea { width: 95%; }
 			#add_tab { cursor: pointer; }
 			#tabs li .ui-icon-close { float: left; margin: 0.4em 0.2em 0 0; cursor: pointer; }	
-			#demo_envelope{position : relative; height : 750px; padding : 0px 10px;}
+			#demo_envelope{position : relative; height : 750px; width:980px; padding : 0px 10px;}
 			#demo_envelope>div { position : absolute; }
-			.code_area { width : 600px; height:500px; color : #006666; font-family : Monaco, 'Courier New' !important; font-size:12px !important; padding : 6px;}
+			.code_area { width : 960px; height:50px; color : #006666; font-family : Monaco, 'Courier New' !important; font-size:12px !important; padding : 6px;}
 			#tabs .ui-tabs-panel  { padding : 3px 3px !important;}
+			
 			#demo_stage_size_disp { position : absolute; left : 430px; top : 280px; color : #eee; }
 			#infoArea { font-size: 1.3em; line-height: 1.1; margin: 1em 0; width: 750px; padding:0px 60px;}
 			#demo_stage { width : 320px; position : absolute; border : solid 1px gray; top : 20px; left : 90px; height : 418px; }
 			#demo_stage * { position:absolute; }
-			#image_url { width: 270px;}
+			#backgroundImage { width: 270px;}
 			.fixedArea th {width : 10px; height:20px;}
 			.fixedArea td {width : 10px; height:20px; border:solid gray; border-width:0 0 1px 1px;} 
 			.fixedArea .fixedHead td {width : 50px;} 
 			.fixedArea table {border-spacing: 0px; border:solid gray; border-width:1px 1px 0 0;} 
 			
-			#tabs { margin-top: 1em; width: 630px; height :100px; top : 620px; left : 0px; }
-			#demo_area { width: 530px; height : 470px; position : absolute; top : 150px; left : 0px; overflow:hidden;} 
-			#prop_area { width: 425px; height : 454px; position : absolute; top : 150px; left : 540px; overflow:hidden;padding:10px; } 
-			#timeline_area { width:980px; top:0px; left:0px; height:130px; padding:5px 10px;}
+			#tab_buttons { top:636px; left:0px;}
+			#tabs { margin-top: 1em; width: 982px; height :100px; top : 656px; left : 0px; }
+			#demo_area        { width: 530px; height : 470px; top : 156px; left : 0px; overflow:hidden;} 
+			#prop_area        { width: 425px; height : 324px; top : 156px; left : 540px; overflow:hidden;padding:10px; } 
+			#static_prop_area { width: 425px; height : 104px; top : 506px; left : 540px; padding:10px; }
+			#timeline_area { width:965px; top:0px; left:0px; height:130px; padding:10px;}
 			#button_area { width:350px; top:660px; left:640px;}
 			#demo_area div{ background-size: 100% 100%; }
 		</style>	
@@ -74,7 +78,7 @@
 	<div id="dialog_message" title="All Data Clear">
 	<p>
 		<span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
-		All data will be clear. ok?
+		すべてのデータが削除されます。　よろしいですか？
 	</p>
 	</div>
 	<div id="new_object_dialog" title="New Object">
@@ -86,20 +90,9 @@
 		</form>
 	</div>
 	
-		<!-- buttons -->
-		<div id="button_area">
-			<span style="font-size: 1.3em;">Examples : </span>
-			<button id="add_tab">タブを追加</button>
-			<button id="execute">実行!</button>
-			<button id="save" >現在のデータを保存する</button>
-			<button id="reset">リセット</button>
-			<button id="clearData" style="margin-left: 20px;">Clear Data</button>
-			<button id="add_object">オブジェクト追加</button>
-			
-		</div>
-		
 		<!-- timeline -->
 		<div id="timeline_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+			<label>フレームNo: <span id="frame_no">12</span></label>
 			<div id="timeline" class="tableDiv"></div>
 			<div id="tableDiv_Arrays">
 				<table id="timeline_table" class="FixedTables" style="display:none;"></table>
@@ -119,23 +112,21 @@
 		</div>
 		<!-- props -->
 		<div id="prop_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
-	       <label>オブジェクト名: <span id="kf_object_name" style="font-size:20px;">aaa</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <!--<input type="text" id="kf_object_name" name="kf_object_name" value="test" />--></label><button id="delete_object">オブジェクト削除</button>
-			<label>フレームNo: <span id="frame_no">12</span></label>
+			<button id="execute">アニメーション実行!</button>
+			<button id="add_object">オブジェクト追加</button>
+			<button id="go_zero_frame">初期状態</button>
+			<button id="delete_current_frame">フレーム削除</button>
 			<div id="prop_detail">
 				<label>透明度 : <input id="opacity" type="number" value="1" min="0" max="1" /></label>
 				<label>x :    <input id="left" type="number" max="520" min="-480"  /></label>
 				<label>y :　   <input id="top" type="number" max="520" min="-480"  /></label>
 				<label>w :　   <input id="width" type="number" max="320" min="0" /></label>
 				<label>h :　   <input id="height" type="number" value="1" max="420" min="0" /> </label>
-				<label>回転 :   <input id="transform_rotate" type="number" value="0" max="720" min="-720" />  </label>
-				<label>角丸 :    <input id="border_radius" type="number" value="1" max="100" min="0" /> </label>
+				<label>回転 :   <input id="rotate" type="number" value="0" max="720" min="-720" />  </label>
+				<label>角丸 :    <input id="border-radius" type="number" value="1" max="100" min="0" /> </label>
 				<br />
-				<label>背景、文字色 :<input type="text" maxlength="6" size="6" id="color" value="#522F7F" /></label>
+				<label>背景、文字色 :<input type="text" maxlength="6" size="6" id="backgroundColor" value="#522F7F" /></label>
 				<br />
-				<hr />
-				以下はタイムライン稼働中に切り替え不可能<br />
-				<label>画像 : <input id="image_url" type="text" value="http://s1-02.twitpicproxy.com/photos/full/526829532.jpg"/> </label><button id="clear_img">画像クリア</button><br />
-				<label>イージング : <input id="ease_type" type="text" /> </label><br />
 				<label>フリー(JSON-CSS) : <textarea id="other_css"></textarea> <a href="#!" id="dialog_button">?</a></label>
 				<div id="dialog" title="フリーJSON-CSSについて">
 	<p>JSONスタイルでCSSを定義してください. <br /> e.g) <pre>
@@ -147,7 +138,22 @@
 </div>
 			</div>
 		</div>
+		<div id="static_prop_area" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+	       <label>オブジェクト名: <span id="kf_object_name" style="font-size:20px;">aaa</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <!--<input type="text" id="kf_object_name" name="kf_object_name" value="test" />--></label><button id="delete_object">オブジェクト削除</button>
+			
+				<label>画像 : <input id="backgroundImage" type="text" value="http://s1-02.twitpicproxy.com/photos/full/526829532.jpg"/> </label><button id="clear_img">画像クリア</button><br />
+				<label>イージング : <input id="ease_type" type="text" /> </label><br />
+				<label>z-index（重なり順） : <input id="z-index" type="text" value="0"/> </label>
+		</div>
 		<!-- tabs area -->
+		
+		<div id="tab_buttons">
+			<button id="write_to_tab" >タブへ書き出し</button>
+			<button id="read_from_tab" >タブから読み込み</button>
+			<button id="save" >下記をローカルストレージに保存する</button>
+			<button id="add_tab">タブを追加</button>
+			<button id="clearData" style="margin-left: 20px;">すべてのタブを削除</button>
+		</div>
 		<div id="tabs">
 			<ul id="tabs_list">
 				<li><a href="#tabs-1">1</a></li>
@@ -158,152 +164,138 @@
 			</ul>
 			<!-- sample start -->
 			<div id="tabs-1" ><textarea class="code_area">
-$('#box1').keyframe({
-  300: {
-    left: '200px'
-  },
-  500: {
-    left: '150px'
-  },
-  1000: {
-    left: '400px'
-  }
-}, 'easeOut');
-
-// 第一引数 : アニメーション定義
-// 第二匹数 : (optional) イージングを設定. 
-// ease, ease-out, ease-in, ease-in-out,
-// linear, cubic-bezier(x1, y1, x2, y2)
-//   デフォルト : ease.
-//
-// (例： cubic-bezier(0.5, 0.2, 0.3, 1.0))
+//オブジェクトの中身を記述します
+{
+	obj1 : {
+		 0 : {width:'100px', height:'100px', backgroundColor:"#522F7F", left:'10px', top:'10px',
+						opacity:1, 'rotate':'0deg' , 'border-radius':'0px'},
+		10 : {opacity : 1, left:'180px'}
+	},
+	obj2 : {
+		0 : {width:'100px', height:'100px', backgroundColor:"#522F7F", left:'10px', top:'10px',
+						opacity:1, 'rotate':'0deg' , 'border-radius':'0px'},
+		20 : {opacity : 0},
+		30 : {opacity : 1, top:'150px', rotate:'125deg'}
+	}
+}
 
 </textarea></div>
 			<div id="tabs-2" ><textarea class="code_area">
-$('#box1').keyframe({
-  700: {
-    height: '300px',
-    width: '300px',
-    top: '20px'
-  },
-  1400: {
-    width: '60px',
-    height: '60px',
-    left: '200px',
-  },
-  1100: {
-    top: '200px'
-  },
-  1600: {
-    width:'80px',
-    height:'80px',
-    left:'190px',
-    top: '100px'
-  }
-});
+{
+	"obj1": {
+		"0": {
+			"width": "100px",
+			"height": "100px",
+			"backgroundColor": "#522F7F",
+			"left": "10px",
+			"top": "10px",
+			"opacity": "1",
+			"rotate": "0deg",
+			"border-radius": "0px"
+		},
+		"10": {
+			"opacity": 1,
+			"left": "180px"
+		}
+	},
+	"obj2": {
+		"0": {
+			"width": "100px",
+			"height": "100px",
+			"backgroundColor": "#522F7F",
+			"left": "10px",
+			"top": "10px",
+			"opacity": 1,
+			"rotate": "0deg",
+			"border-radius": "0px",
+			"backgroundImage": "http://s1-02.twitpicproxy.com/photos/full/526829532.jpg"
+		},
+		"20": {
+			"opacity": 0
+		},
+		"30": {
+			"opacity": 1,
+			"top": "150px",
+			"rotate": "125deg"
+		}
+	}
+}
 </textarea></div>
 			<div id="tabs-3" ><textarea class="code_area">
-$('#box1').keyframe({
-  start: {
-    opacity: 0.8,
-    top: '100px', left: '15px',
-    width: '60px', height:'60px',
-  },
-  100: {
-    left: '50px',
-    opacity: 1
-  },
-  257: {
-    left: '200px',
-    width: 200
-  },
-  560: {
-    top: '30px',
-    height: '60px'
-  },
-  900: {
-    opacity: 1,
-    height: '120px',
-    top: '390px',
-    'line-height': '60px'
-  },
-  920: {
-    opacity:0.6,
-    height: '30px',
-    'line-height': '30px'
-  }
-});
+
+{
+	"obj1": {
+		"0": {
+			"width": "100px",
+			"height": "100px",
+			"backgroundColor": "#522F7F",
+			"left": "10px",
+			"top": "10px",
+			"opacity": "1",
+			"rotate": "0deg",
+			"border-radius": "0px"
+		},
+		"10": {
+			"opacity": 1,
+			"left": "180px"
+		}
+	},
+	"obj2": {
+		"0": {
+			"width": "100px",
+			"height": "100px",
+			"backgroundColor": "#522F7F",
+			"left": "10px",
+			"top": "10px",
+			"opacity": 1,
+			"rotate": "0deg",
+			"border-radius": "0px",
+			"backgroundImage": "http://s1-02.twitpicproxy.com/photos/full/526829532.jpg"
+		},
+		"30": {
+			"width": "224px",
+			"height": "145px",
+			"backgroundColor": "#522F7F",
+			"left": "10px",
+			"top": "150px",
+			"opacity": "1",
+			"rotate": "24deg",
+			"border-radius": "0px"
+		}
+	}
+}
 			</textarea></div>
 			<div id="tabs-4" ><textarea class="code_area">
-// 色を変更します.
-var p = '#522F7F', g = '#1EF976',
-    r = '#C12D10',
-    bg_p = {'background-color':p},
-    bg_g = {'background-color':g};
 
-$('#box1').keyframe({
-  start: {
-    opacity: 1,
-    'background-color': p,
-    top: '170px', left: '265px',
-    width: '60px', height:'60px'
-  },
-  
-  // 点滅！
-  100: bg_p,
-  300: bg_g,
-  550: bg_p,
-  850: bg_g,
-  1150: bg_p,
-  1350: bg_g,
-  1600: bg_p,
-  
-  // 爆発の前準備(嵐の前の静けさ…)
-  1950: {
-    'background-color': p,
-    top: '170px', left: '265px',
-    width: '60px', height:'60px',
-    opacity: 1
-  },
-  
-  // 爆発！
-  2200: {
-    'background-color': r,
-    width:'1800px', height:'600px',
-    top: '-88px', left: '-600px',
-    opacity:0
-  }
-  
-}, 'easeOutExpo');
+{
+	obj1 : {
+		 0 : {width:'100px', height:'100px', backgroundColor:"#522F7F", left:'10px', top:'10px',
+						opacity:1, 'rotate':'0deg' , 'border-radius':'0px'},
+		10 : {opacity : 1, left:'180px'}
+	},
+	obj2 : {
+		0 : {width:'100px', height:'100px', backgroundColor:"#522F7F", left:'10px', top:'10px',
+						opacity:1, 'rotate':'0deg' , 'border-radius':'0px'},
+		20 : {opacity : 0},
+		30 : {opacity : 1, top:'150px', rotate:'125deg'}
+	}
+}
 		</textarea></div>
 			<div id="tabs-5" ><textarea class="code_area">
-// 2つ同時に動かす
-$('#box1').keyframe({
-  start:{opacity: 1,
-  top: '100px',
-  width: '60px', height:'60px'},
-  300: {
-    left: '200px'
-  },
-  500: {
-    left: '150px'
-  },
-  1000: {
-    left: '460px'
-  }
-}, 'easeOut');
 
-$('#box2').keyframe({
-  300: {
-    left: '260px'
-  },
-  500: {
-    left: '310px'
-  },
-  1000: {
-    left: '15px'
-  }
-}, 'easeOut');
+{
+	obj1 : {
+		 0 : {width:'100px', height:'100px', backgroundColor:"#522F7F", left:'10px', top:'10px',
+						opacity:1, 'rotate':'0deg' , 'border-radius':'0px'},
+		10 : {opacity : 1, left:'180px'}
+	},
+	obj2 : {
+		0 : {width:'100px', height:'100px', backgroundColor:"#522F7F", left:'10px', top:'10px',
+						opacity:1, 'rotate':'0deg' , 'border-radius':'0px'},
+		20 : {opacity : 0},
+		30 : {opacity : 1, top:'150px', rotate:'125deg'}
+	}
+}
 		</textarea></div>
 
 			<!-- sample end -->
@@ -335,6 +327,26 @@ $('#box2').keyframe({
 			</p>
 		</div>
 		</div>
+		
+		<textarea id="exec_area"></textarea>
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
 	</body>
 </html>
 

@@ -6,18 +6,18 @@ $(function(){
 	window.App ={Models:{}, Collections:{}, Views:{}, Routers:{} , Instances:{}, Data:{}};//名前空間的な
 	
 	App.Data.initState = {width:'100px', height:'100px', backgroundColor:"#522F7F", left:'10px', top:'10px',
-						opacity:1, transform_rotate:0, transform_scaleX:0, transform_scaleY:0, border_radius:'0px'};
+						opacity:1, 'rotate':'0deg' , 'border-radius':'0px'};
 	
 	//本当は読み込み時に初期化される、はず。
-	App.Data.timeline = {
+	App.Data.timeline = App.Data.timeline || {
 					obj1 : {
-						 0 : App.Data.initState,
+						 0 : _.clone(App.Data.initState),
 						10 : {opacity : 1, left:'180px'}
 					},
 					obj2 : {
-						0 : App.Data.initState,
+						0 : _.clone(App.Data.initState),
 						20 : {opacity : 0},
-						30 : {opacity : 1, top:'150px'}
+						30 : {opacity : 1, top:'150px', rotate:'125deg'}
 					}
 				};
 	
@@ -31,8 +31,7 @@ $(function(){
 			this.on('error',  this.errorFunc);
 		},
 		defaults :{ //Modelのデフォルト値を設定します
-			frame : 0,
-			color : '#ffffff'
+			//frame : 0
 		},
 		destroy : {//破棄時のイベント。勝手にバインディングをされるよ。
 			
@@ -47,9 +46,10 @@ $(function(){
 		changeFunc : function(model){
 			//タイムラインのmodelへの更新処理
 			var objName = window.currentObject.attr("id");
-			var tmp = App.Instances.TimelineView.model.get(objName)
-			tmp[window.currentFrame] = model.toJSON();
-			App.Instances.TimelineView.model.set(objName, tmp);
+			//var tmp = App.Instances.TimelineView.model.get(objName)
+			//tmp[window.currentFrame] = model.toJSON();
+			//App.Instances.TimelineView.model.set(objName, tmp);
+			App.Instances.TimelineView.model.setPropData(objName, window.currentFrame, model.toJSON());
 		},
 		errorFunc : function(model, errMsg){
 			//console.log(errMsg);
@@ -73,7 +73,17 @@ $(function(){
 		//■自分で定義した関数 Custom function -----------
 		changeFunc: function(model){
 			//永続化処理とか
-		}
+		},
+		setPropData : function(objId, frame, propData){
+			var tmp = this.get(objId);
+			tmp[frame] = propData;
+			this.set(objId, tmp);
+		},
+		deletePropData :function(objId, frame){
+			var tmp = this.get(objId);
+			delete tmp[frame];
+			this.set(objId, tmp)
+		} 
 	});
 	
 	
@@ -104,7 +114,7 @@ $(function(){
 		render : function(){
 			console.log("プロップレンダー！！");
 			
-			var data = this.model.toJSON();//モデル取得
+			//var data = this.model.toJSON();//モデル取得
 			//console.log(JSON.stringify(data))
 			//var html = this.template(data[0]);//テンプレート適用
 			//console.log($(this.el)	)
@@ -121,17 +131,17 @@ $(function(){
 		loadFrom :function(model){
 			//text系
 			$('#kf_object_name').val(this.model.get(('kf_object_name')));
-			$('#color').val(this.model.get(('color')));
+			$('#backgroundColor').val(this.model.get(('backgroundColor')));
 			
 			//slider系
 			var __setSlider = _.bind(setSlider, this);
 			__setSlider("opacity", {step: 0.01});
-			__setSlider("top", {unit: 'px'});
-			__setSlider("left", {unit: 'px'});
-			__setSlider("width", {unit: 'px'});
-			__setSlider("height", {unit: 'px'});
-			__setSlider("transform_rotate", {unit: 'px'});
-			__setSlider("border_radius", {unit: 'px'});
+			__setSlider("top", {sufix: 'px'});
+			__setSlider("left", {sufix: 'px'});
+			__setSlider("width", {sufix: 'px'});
+			__setSlider("height", {sufix: 'px'});
+			__setSlider("rotate", {sufix: 'deg'} );
+			__setSlider("border-radius", {sufix: 'px'});
 		},
 		sliderInputs : {} //setSliderの中から呼ばれる
 	});
@@ -139,15 +149,19 @@ $(function(){
 	
 	App.Views.TimelineView = Backbone.View.extend({
 		//■オーバーライド関数 Overrides
-		initialize : function(){
+		initialize : function(model){
+			model && this.setModel(model);
+		},
+		//model : new App.Models.TimelineModel(App.Data.timeline),
+		//■自分で定義した関数 Custom function -----------
+		setModel: function(newModel){
+			this.model = newModel;
 			this.model.on("change", this.render, this);
 			this.render();
 			for(var objName in this.model.attributes){
 				this.renderNewObject(objName, 0);
 			}
 		},
-		model : new App.Models.TimelineModel(App.Data.timeline),
-		//■自分で定義した関数 Custom function -----------
 		render : function(){
 			//テーブル構築
 			var data = this.model.toJSON();
@@ -159,9 +173,13 @@ $(function(){
 		},
 		renderNewObject: function(newObjName, frame){
 			var frame = frame || 0;
-			$('<div id="'+newObjName+'"/>').appendTo($("#demo_stage"))
+			var anims = this.model.get(newObjName);
+			var div = $('<div id="'+newObjName+'"/>').appendTo($("#demo_stage"))
 						.text('#'+newObjName)
-						.css(this.model.get(newObjName)[frame]);
+						.css(anims[frame]);
+			if(!!anims[0].backgroundImage){
+				div.css('backgroundImage', 'url(' + anims[0].backgroundImage + ')');
+			}
 		},
 		removeObject:function(objName){
 			this.model.unset(objName);
@@ -181,39 +199,9 @@ $(function(){
 	App.Instances.PropView     = new App.Views.PropView(model);
 	App.Instances.TimelineView = new App.Views.TimelineView();
 	
-	$('#timeline_table td').eq(0).click();//初回は左上端を選択状態にする。
-	
-	//----------
-	// prop area
+	//表示中のタブから読み込み
+	$('#read_from_tab').click();
 
-		
-		// image setting
-		$("#image_url").on('input', function(){
-			currentObject.css('backgroundImage', 'url(' + $(this).val() +')')
-		})
-		// color setting
-		var colorInput = $('#color');
-		colorInput.ColorPicker({
-			color: colorInput.val() || '#0000ff',
-			onChange: function (hsb, hex, rgb){
-				$("#color").val('#' + hex);
-				currentObject.css('backgroundColor', '#' + hex);
-			},
-			onShow : function(colpkr){
-				$(colpkr).css('z-index',9999)
-			}
-		});
-		// other css setting
-		$("#other_css").on('input', function(){
-			try{
-				var obj = JSON.parse($(this).val())
-				currentObject.css(obj);
-			}catch(e){
-			}
-		});
-		$( "#dialog" ).dialog({autoOpen:false, position:'right'});
-		$("#dialog_button").on("click", function(){$( "#dialog" ).dialog("open")});
-	
 	
 	//---------------------------------------------------------------------------------
 	// Render系の処理
@@ -229,9 +217,10 @@ $(function(){
 			option.min = option.min || input.attr("min") || 0;
 			option.val = option.val || this.model.get(sourceId) || input.val() || 0;
 			option.step = option.step || input.attr("step") || 1;
-			option.unit = option.unit || '';
+			option.prefix = option.prefix || '';
+			option.sufix = option.sufix || '';
 			
-			option.val = (option.val + '').replace(option.unit, '')
+			option.val = (option.val + '').replace(option.sufix, '').replace(option.prefix, '')
 			
 			if(!input.val()){
 				input.val(option.val)
@@ -246,7 +235,8 @@ $(function(){
 			var updaetView = _.bind(function(name, value){
 				if(currentObject){
 					//console.log(name + ' x:x '+ value + ' : ' + currentObject.css(name))
-					currentObject.css(name.replace('_','-'), value )
+					currentObject.css(name, value )
+					
 					this.model.set(name, value);//modelへの変更
 					window.currentStyle[name] = value;
 				}
@@ -260,27 +250,28 @@ $(function(){
 				step : +option.step,
 				value : +option.val,
 				slide: function( event, ui ) {
-					input.val(ui.value)
-					updaetView(sourceId, ui.value+ option.unit);
+					input.val(ui.value);
+					updaetView(sourceId, option.prefix + ui.value+ option.sufix);
 					
 				}
 			});
 			input.on('input', function() {
-				slider.slider( "value", $(this).val() );
-				updaetView(sourceId, $(this).val()+ option.unit);
+				slider.slider( "value", $(this).val() );//スライダ座標変更
+				updaetView(sourceId, option.prefix + $(this).val()+ option.sufix);//画面更新
 			});
 			input.attr("max", option.max);
 			input.attr("min", option.min);
-			$('<span> (' + option.min + ' - ' + option.max + ') </span> <label><input type="checkbox" />アニメ化</label>' ).insertAfter( input )
+			//$('<span> (' + option.min + ' - ' + option.max + ') </span> <label><input type="checkbox" />アニメ化</label>' ).insertAfter( input );
+			$('<span> (' + option.min + ' - ' + option.max + ') </span> ' ).insertAfter( input );
 			this.sliderInputs[sourceId] = input;
-			input.val(option.val.replace(option.unit, '')).trigger('input');
+			input.val(option.val.replace(option.sufix, '').replace(option.prefix, '')).trigger('input');
 			
 			
 		}
 	
 	//■タイムライン表示再構築 -------------------------------------------------------------------
 	function buildTimelineTable(data){
-		var tbl = $('#timeline_table').show().empty().append('<thead>').append('<tbody>');
+		var tbl = $('#timeline_table').empty().append('<thead>').append('<tbody>');
 		
 		//初期化
 		var thead = $('<tr>').appendTo(tbl.find('thead')).append('<th>オブジェクト名＼フレーム数</th>');
@@ -294,17 +285,17 @@ $(function(){
 			for(var key in data){
 				var obj = data[key][i];
 				if(obj){
-					tbodys[key].append('<td>　' + '</td>')
+					tbodys[key].append('<td>　' + '</td>');
 				}else{
-					tbodys[key].append('<td>　</td>')
+					tbodys[key].append('<td>　</td>');
 				}
 			}
 		}
 		//タイムライン表示化
 		$('#timeline').empty();
 		tbl.clone().show().appendTo('#timeline').fixedTable({
-			width: 960,
-			height: 135,
+			width: 950,
+			height: 130,
 			fixedColumns: 1,
 			classHeader: "fixedHead",// header style
 			classFooter: "fixedFoot",// footer style
@@ -323,13 +314,11 @@ $(function(){
 				var targetTR = $('#timeline_table tr').eq(idx); //操作対象のTR
 				
 				var f = data[objId];
-				console.log(f);
-				console.log(targetTR)
 				
 				targetTR.children().each(function(i){
 					$(this).css('background', f[i] ? 'red': 'white');//キーフレームアリなしで色分け
-				})
-			})
+				});
+			});
 		};
 		setKeyframeColors();
 		
@@ -346,11 +335,9 @@ $(function(){
 			window.currentObject = $("#" + objId);//currentObj変更（操作対象変更）
 			window.currentStyle = anims[frame] || {};//多分これ使わねぇなー…
 			
-			console.log(objId + ' : ' + frame + ' ###################');
 			
 			$('#frame_no').text(frame);//フレーム数表示
 			$('#kf_object_name').text(""+objId);//オブジェクト名表示
-			console.log($('#kf_object_name'))
 			
 			
 			//見た目、データ変更 -----------------------------
@@ -362,26 +349,34 @@ $(function(){
 			//選択中セルのオブジェクトタイトル色付け
 			$(".fixedColumn .fixedTable tr").each(function(){
 				$(this).css('backgroundColor', $(this).text() == objId? '#palegreen':'');
-			})
-			
-			
-			
-			//データ合成: クリックしたフレームにおけるスタイルを生成
-			window.compositStyle = {};
-			_.each(_.keys(anims), function(keyFrame){
-				if(keyFrame <= +frame){
-					for(var k in anims[keyFrame]){
-						window.compositStyle[k] = anims[keyFrame][k] || window.compositStyle[k];
-					}
-				}else return false;
 			});
-			window.compositStyle.frame = +frame;
 			
+			// クリックしたフレームにおけるスタイルを生成
+			window.compositStyle = getCompositStyle(anims, frame);
+			//ぜんぶに適用ー
+			for(var _id in data){
+				$('#'+_id).css(getCompositStyle(data[_id], frame));
+			}
+			console.log(anims[0].backgroundImage);
+			$("#backgroundImage").val(anims[0].backgroundImage);
+			$("#z-index").val(anims[0]['z-index']);
 			
 			//PropViewのmodel変更（値適用）, render呼び出し
 			App.Instances.PropView.setModel(new App.Models.PropModel(window.compositStyle));
 		});
+	}
 	
+	//データ合成：指定したフレームまでのアニメーションを生成
+	function getCompositStyle(animObject, endFrame){
+		var compositStyle = {};
+		_.each(_.keys(animObject), function(keyFrame){
+			if(keyFrame <= +endFrame){
+				for(var k in animObject[keyFrame]){
+					compositStyle[k] = animObject[keyFrame][k] || compositStyle[k];
+				}
+			}else return false;
+		});
+		return compositStyle
 	}
 	//---------------------------------------------------------------------------------
 })
