@@ -47,6 +47,7 @@
 		options = args[1],
         // Capture easing option
         default_easing = (options && options.ease) || 'ease',
+        fps = (options && options.fps) || 24,
         // Stores object keys in numerical order
         keys = [], key_len,
         // Unique animation name
@@ -90,7 +91,7 @@
     cssKeyFrame +
     '}' + '\n');
     
-    _.css(VENDER_PREFIX + 'Animation-duration' , duration/1000 + 's');
+    _.css(VENDER_PREFIX + 'Animation-duration' , duration/1000*fps + 's');
     _.css(VENDER_PREFIX + 'Animation-timing-function' , default_easing);
     _.css(VENDER_PREFIX + 'Animation-iteration-count' , ' 1');
     
