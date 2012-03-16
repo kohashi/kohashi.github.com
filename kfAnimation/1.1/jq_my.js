@@ -141,6 +141,11 @@
 			.click(function(){
 					App.Instances.TimelineView.removeObject(window.currentObject.attr('id'));
 			});
+		$('#go_zero_frame')
+			.button()
+			.click(function(){
+					$('#timeline_table td').eq(0).click();
+			});
 		//------------------------------------
 		
 		//textarea configiration

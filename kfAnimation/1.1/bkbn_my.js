@@ -32,7 +32,7 @@ $(function(){
 			this.on('error',  this.errorFunc);
 		},
 		defaults :{ //Modelのデフォルト値を設定します
-			frame : 0
+			//frame : 0
 		},
 		destroy : {//破棄時のイベント。勝手にバインディングをされるよ。
 			
@@ -361,7 +361,6 @@ $(function(){
 				}
 			}else return false;
 		});
-		compositStyle.frame = +endFrame;
 		return compositStyle
 	}
 	//---------------------------------------------------------------------------------
