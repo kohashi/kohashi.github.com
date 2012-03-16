@@ -240,17 +240,30 @@
 		mdl[0].backgroundImage = imgUrl;
 		App.Instances.TimelineView.model.set(objName, mdl);
 	});
+	//z-index setting
+	$("#z-index").on('input',function(){
+		var zIdx = $(this).val();
+		var objName = currentObject.attr('id');
+		currentObject.css('z-index', zIdx);
+		var mdl = window.App.Instances.TimelineView.model.get(objName);
+		mdl[0]['z-index'] = zIdx;
+		App.Instances.TimelineView.model.set(objName, mdl);
+	})
 	// color setting
-	var colorInput = $('#color');
+	var colorInput = $('#backgroundColor');
 	colorInput.ColorPicker({
 		color: colorInput.val() || '#0000ff',
 		onChange: function (hsb, hex, rgb){
-			$("#color").val('#' + hex);
+			$("#backgroundColor").val('#' + hex);
 			currentObject.css('backgroundColor', '#' + hex);
 		},
 		onShow : function(colpkr){
 			$(colpkr).css('z-index',9999)
 		}
+	}).on("change",function(){
+		console.log($(this)[0].id)
+		console.log($(this).val())
+		this.model.set($(this)[0].id, $(this).val());//modelへの変更
 	});
 	// other css setting
 	$("#other_css").on('input', function(){

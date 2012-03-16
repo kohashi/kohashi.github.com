@@ -131,7 +131,7 @@ $(function(){
 		loadFrom :function(model){
 			//text系
 			$('#kf_object_name').val(this.model.get(('kf_object_name')));
-			$('#color').val(this.model.get(('color')));
+			$('#backgroundColor').val(this.model.get(('backgroundColor')));
 			
 			//slider系
 			var __setSlider = _.bind(setSlider, this);
@@ -359,6 +359,7 @@ $(function(){
 			}
 			console.log(anims[0].backgroundImage);
 			$("#backgroundImage").val(anims[0].backgroundImage);
+			$("#z-index").val(anims[0]['z-index']);
 			
 			//PropViewのmodel変更（値適用）, render呼び出し
 			App.Instances.PropView.setModel(new App.Models.PropModel(window.compositStyle));
